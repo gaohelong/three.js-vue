@@ -68,8 +68,8 @@ export default {
       controls.minDistance = 0 // 你能够将相机向内移动多少（仅适用于PerspectiveCamera），其默认值为0。
       controls.maxDistance = 10 // 你能够将相机向外移动多少（仅适用于PerspectiveCamera），其默认值为Infinity。
 
-      // controls.minAzimuthAngle = -Infinity //
-      // controls.maxAzimuthAngle = Infinity //
+      // controls.minAzimuthAngle = -Infinity // 最小方位角
+      // controls.maxAzimuthAngle = Infinity // 最大方位角
 
       /* 本地图片、网络获取图片 */
       const loader = new THREE.TextureLoader()
