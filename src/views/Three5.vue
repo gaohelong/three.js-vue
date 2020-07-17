@@ -1,5 +1,6 @@
 <template>
   <section class="container">
+    <div>单击事件</div>
     <div class="three" @click="mousemoveProc"></div>
     <section>
       <button class="btn" @click="freeMove(false)">水平移动</button>
@@ -14,6 +15,7 @@
 <script>
 import * as THREE from 'three'
 import img2k from '@/assets/2k_earth_daymap.jpg'
+import aircraftImg from '@/assets/aircraft.jpg'
 const OrbitControls = require('three-orbit-controls')(THREE)
 
 let renderer, controls, camera
@@ -30,10 +32,31 @@ export default {
   },
   methods: {
     mousemoveProc (e) {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+      // 将鼠标点击位置的屏幕坐标转成threejs中的标准坐标,具体解释见代码释义
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
+      // 新建一个三维单位向量 假设z方向就是0
+      // 根据照相机，把这个向量转换到视点坐标系
+      const vector = new THREE.Vector3(mouse.x, mouse.y, 0).unproject(camera)
 
-      console.log(mouse)
+      // 在视点坐标系中形成射线,射线的起点向量是照相机， 射线的方向向量是照相机到点击的点，这个向量应该归一标准化。
+      raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
+
+      // 射线和模型求交，选中一系列直线
+      const intersects = raycaster.intersectObjects(scene.children)
+      // console.log('imtersrcts=' + intersects)
+
+      if (intersects.length > 0) {
+        // 选中第一个射线相交的物体
+        // SELECTED = intersects[0].object
+        // const intersected = intersects[0].object
+        console.log(intersects[0].object)
+        // console.log(intersects[0].object.geometry)
+        // console.log(intersects[0].object.geometry.type)
+        if (intersects[0].object.geometry && intersects[0].object.geometry.type === 'PlaneGeometry') {
+          console.log(intersects[0].object.geometry.name)
+        }
+      }
     },
     reset () {
       this.clearAnimationFrame()
@@ -96,9 +119,15 @@ export default {
       const size = Math.min(window.innerWidth, 600)
       renderer.setSize(size, size)
       renderer.setPixelRatio(window.devicePixelRatio)
+      // renderer.shadowMap.enabled = true // 设置是否开启投影, 开启的话, 光照会产生投影
+      // renderer.shadowMap.type = THREE.PCFSoftShadowMap // 设置投影类型, 这边的柔和投影
 
       /* 场景 */
       scene = new THREE.Scene()
+
+      // 非PC端, 只添加一个天空光, 天空光从正上方往下照, 可以照出明暗对比, 但是不产生阴影
+      const hemisphereLight = new THREE.HemisphereLight(0xffffff, 1.6)
+      scene.add(hemisphereLight)
 
       /* 相机 */
       camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000).translateZ(2.8)
@@ -159,7 +188,41 @@ export default {
       // mesh.rotation.y = 0
       // mesh.position.z = 0
       mesh.rotateY(100) // 绕y轴旋转100弧度
-      scene.add(mesh)
+      scene.add(mesh) // 往场景里添加材质.
+
+      /* 添加物体 */
+      const map1 = await loader.load(
+        aircraftImg, // 本地图片
+        // onLoad回调
+        function (texture) {
+          return texture
+        }
+      )
+
+      // 平面几何体
+      const geometry = new THREE.PlaneGeometry(1, 1, 1)
+      geometry.name = 'fly-yibao'
+      geometry.rotateX(1)
+      geometry.rotateY(1)
+      geometry.rotateZ(1)
+      // geometry.translate(0, 1)
+      const object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({
+        map: map1
+      }))
+
+      object.position.x = 1
+      object.position.y = 0
+      object.position.z = 0
+
+      object.rotation.x = 0
+      object.rotation.y = 0
+      object.rotation.z = 0
+
+      // object.scale.x = 1
+      // object.scale.y = 1
+      // object.scale.z = 1
+
+      scene.add(object)
 
       /* 渲染 */
       setTimeout(function () {
@@ -168,40 +231,31 @@ export default {
       controls.addEventListener('change', () => renderer.render(scene, camera))
       // invalidation.then(() => (controls.dispose(), renderer.dispose()))
 
+      /* 光线投射 */
+      // 这个类用于进行raycasting（光线投射）.光线投射用于进行鼠标拾取（在三维空间中计算出鼠标移过了什么物体）
+      // raycaster = new THREE.Raycaster()
+      mouse = new THREE.Vector3()
+
+      // 通过摄像机和鼠标位置更新射线
+      // raycaster.setFromCamera(mouse, camera)
+
+      // 计算物体和射线的焦点
+      // raycaster.intersectObjects(scene.children)
+      // const intersects = raycaster.intersectObjects(scene.children)
+      // for (let i = 0; i < intersects.length; i++) {
+      //   intersects[i].object.material.color.set(0xff0000)
+      // }
+
       document.querySelector('.three').appendChild(renderer.domElement)
       // document.body.appendChild(renderer.domElement)
-
-      /* 光线投射 */
-      raycaster = new THREE.Raycaster()
-      mouse = new THREE.Vector2()
     },
     async loadTexture (url) {
       const loader = new THREE.TextureLoader()
       return url => new Promise(resolve => loader.load(url, resolve))
-    },
-    animation () {
-      // mesh.rotateX(0.001) // 每次绕x轴旋转0.01弧度
-      mesh.rotateY(0.001) // 每次绕y轴旋转0.01弧度 - 绕局部空间的Y轴旋转这个物体, 将要旋转的角度（以弧度来表示）
-      // mesh.rotateZ(0.001) // 每次绕z轴旋转0.01弧度
-      // mesh.translateX(0.001) // 沿着X轴将平移
-      // mesh.translateY(0.001) // 沿着Y轴将平移
-      // mesh.translateZ(0.001) // 沿着Z轴将平移
-      requestAnimationFrameVal = window.requestAnimationFrame(this.animation) // 请求再次执行渲染函数render
-      renderer.render(scene, camera) // 执行渲染操作
-
-      // 通过摄像机和鼠标位置更新射线
-      raycaster.setFromCamera(mouse, camera)
-
-      // 计算物体和射线的焦点
-      var intersects = raycaster.intersectObjects(scene.children)
-      for (var i = 0; i < intersects.length; i++) {
-        intersects[i].object.material.color.set(0xff0000)
-      }
     }
   },
   async mounted () {
     await this.init()
-    this.animation()
   },
   beforeDestroy () {
     controls.dispose()
