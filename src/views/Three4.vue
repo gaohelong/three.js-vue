@@ -1,11 +1,10 @@
 <template>
   <section class="container">
-    <div>X、Y、Z轴旋转</div>
+    <div>水平移动、y轴旋转</div>
     <div class="three"></div>
     <section>
-      <button class="btn" @click="rotation('x')">绕局部空间的X轴旋转这个</button>
-      <button class="btn" @click="rotation('y')">绕局部空间的Y轴旋转这个</button>
-      <button class="btn" @click="rotation('z')">绕局部空间的Z轴旋转这个</button>
+      <button class="btn" @click="pause(false)">开始</button>
+      <button class="btn" @click="pause(true)">暂停</button>
     </section>
   </section>
 </template>
@@ -20,51 +19,20 @@ let mesh, scene
 let requestAnimationFrameVal
 
 export default {
-  name: 'Three3',
+  name: 'Three4',
   data () {
     return {}
   },
   methods: {
-    freeMove (type) {
+    pause (type) {
       this.clearAnimationFrame()
-      if (type) {
-        // 自由移动.
-        controls.minPolarAngle = 0 // 你能够垂直旋转的角度的下限，范围是0到Math.PI，其默认值为0。
-        controls.maxPolarAngle = Math.PI // 你能够垂直旋转的角度的上限，范围是0到Math.PI，其默认值为Math.PI。
-      } else {
-        // 限制水平移动.
-        controls.minPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的下限，范围是0到Math.PI，其默认值为0。
-        controls.maxPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的上限，范围是0到Math.PI，其默认值为Math.PI。
+      if (!type) {
+        this.rotationY()
       }
-
-      controls.reset()
-    },
-    rotation (type) {
-      this.clearAnimationFrame()
-      switch (type) {
-        case 'x':
-          this.rotationX()
-          break
-        case 'y':
-          this.rotationY()
-          break
-        default:
-          this.rotationZ()
-      }
-    },
-    rotationX () {
-      mesh.rotateX(0.001) // 每次绕x轴旋转0.01弧度
-      requestAnimationFrameVal = window.requestAnimationFrame(this.rotationX) // 请求再次执行渲染函数render
-      renderer.render(scene, camera) // 执行渲染操作
     },
     rotationY () {
       mesh.rotateY(0.001) // 每次绕y轴旋转0.01弧度
       requestAnimationFrameVal = window.requestAnimationFrame(this.rotationY) // 请求再次执行渲染函数render
-      renderer.render(scene, camera) // 执行渲染操作
-    },
-    rotationZ () {
-      mesh.rotateZ(0.001) // 每次绕z轴旋转0.01弧度
-      requestAnimationFrameVal = window.requestAnimationFrame(this.rotationZ) // 请求再次执行渲染函数render
       renderer.render(scene, camera) // 执行渲染操作
     },
     clearAnimationFrame () {
@@ -109,12 +77,19 @@ export default {
       controls.panSpeed = 1 // 位移的速度，其默认值为1。
       controls.minDistance = 0 // 你能够将相机向内移动多少（仅适用于PerspectiveCamera），其默认值为0。
       controls.maxDistance = 10 // 你能够将相机向外移动多少（仅适用于PerspectiveCamera），其默认值为Infinity。
+      controls.rotateSpeed = 0.5 // 旋转的速度，其默认值为1.
+
+      // 限制水平移动.
+      controls.minPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的下限，范围是0到Math.PI，其默认值为0。
+      controls.maxPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的上限，范围是0到Math.PI，其默认值为Math.PI。
+
       // 视角的最大仰角和俯角
       // controls.minAzimuthAngle = Math.PI / 12
       // controls.maxAzimuthAngle = Math.PI / 2.5
+
       // controls.autoRotate = true // 自动旋转
       // controls.autoRotateSpeed = 0.5 // 旋转速度
-      controls.rotateSpeed = 0.5 // 旋转的速度，其默认值为1.
+
       // angleAzimuthalVal = controls.getAzimuthalAngle() // 获得当前的水平旋转，单位为弧度。
       // polarAngleVal = controls.getPolarAngle() // 获得当前的垂直旋转，单位为弧度。
 
@@ -158,21 +133,10 @@ export default {
     async loadTexture (url) {
       const loader = new THREE.TextureLoader()
       return url => new Promise(resolve => loader.load(url, resolve))
-    },
-    animation () {
-      // mesh.rotateX(0.001) // 每次绕x轴旋转0.01弧度
-      mesh.rotateY(0.001) // 每次绕y轴旋转0.01弧度 - 绕局部空间的Y轴旋转这个物体, 将要旋转的角度（以弧度来表示）
-      // mesh.rotateZ(0.001) // 每次绕z轴旋转0.01弧度
-      // mesh.translateX(0.001) // 沿着X轴将平移
-      // mesh.translateY(0.001) // 沿着Y轴将平移
-      // mesh.translateZ(0.001) // 沿着Z轴将平移
-      requestAnimationFrameVal = window.requestAnimationFrame(this.animation) // 请求再次执行渲染函数render
-      renderer.render(scene, camera) // 执行渲染操作
     }
   },
   async mounted () {
     await this.init()
-    this.animation()
   },
   beforeDestroy () {
     controls.dispose()

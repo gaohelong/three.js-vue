@@ -37,6 +37,21 @@ const routes = [
     path: '/three3',
     name: 'Three3',
     component: () => import('../views/Three3.vue')
+  },
+  {
+    path: '/three4',
+    name: 'Three4',
+    component: () => import('../views/Three4.vue')
+  },
+  {
+    path: '/three5',
+    name: 'Three5',
+    component: () => import('../views/Three5.vue')
+  },
+  {
+    path: '/three6',
+    name: 'Three6',
+    component: () => import('../views/Three6.vue')
   }
 ]
 

@@ -1,10 +1,13 @@
 <template>
   <section class="container">
+    <div>回到初始位置、水平移动、自由移动</div>
     <div class="three"></div>
     <section>
-      <button class="btn" @click="reset">重置</button>
+      <button class="btn" @click="reset">回到初始位置</button>
       <button class="btn" @click="freeMove(false)">水平移动</button>
       <button class="btn" @click="freeMove(true)">自由移动</button>
+      <button class="btn" @click="rotationY(true)">y轴旋转45</button>
+      <button class="btn" @click="rotationY(false)">还原y轴旋转45</button>
     </section>
   </section>
 </template>
@@ -15,7 +18,7 @@ import img2k from '@/assets/2k_earth_daymap.jpg'
 const OrbitControls = require('three-orbit-controls')(THREE)
 
 let renderer, controls, camera
-let mesh
+let mesh, scene
 
 export default {
   name: 'Three2',
@@ -39,6 +42,14 @@ export default {
 
       controls.reset()
     },
+    rotationY (type) {
+      if (type) {
+        mesh.rotateY(45)
+      } else {
+        mesh.rotateY(-45)
+      }
+      renderer.render(scene, camera) // 执行渲染操作
+    },
     async init () {
       /* 初始化渲染实例及设置 */
       renderer = new THREE.WebGLRenderer({
@@ -51,14 +62,10 @@ export default {
       renderer.setPixelRatio(window.devicePixelRatio)
 
       /* 场景 */
-      const scene = new THREE.Scene()
+      scene = new THREE.Scene()
 
       /* 相机 */
       camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000).translateZ(2.8)
-      // camera.position.set(1, 0, 2.8) // 设置摄像机的位置
-      // camera.lookAt(camera.position) // 设置摄像机观察的方向
-      // camera.filmOffset = 100 // 水平偏离中心偏移量，和.filmGauge单位相同。默认值为0。
-      camera.screenSpacePanning = false
 
       /* 控制器 */
       controls = new OrbitControls(camera, renderer.domElement)
@@ -67,9 +74,7 @@ export default {
       controls.panSpeed = 1 // 位移的速度，其默认值为1。
       controls.minDistance = 0 // 你能够将相机向内移动多少（仅适用于PerspectiveCamera），其默认值为0。
       controls.maxDistance = 10 // 你能够将相机向外移动多少（仅适用于PerspectiveCamera），其默认值为Infinity。
-
-      // controls.minAzimuthAngle = -Infinity // 最小方位角
-      // controls.maxAzimuthAngle = Infinity // 最大方位角
+      controls.rotateSpeed = 0.5 // 旋转的速度，其默认值为1.
 
       /* 本地图片、网络获取图片 */
       const loader = new THREE.TextureLoader()
@@ -92,15 +97,13 @@ export default {
       mesh = new THREE.Mesh(new THREE.SphereBufferGeometry(1, 32, 32), new THREE.MeshBasicMaterial({
         map
       }))
-      // mesh.rotation.x = 1
-      // mesh.rotation.y = 10
-      // mesh.rotation.z = 10
+      mesh.rotateY(100) // 绕y轴旋转100弧度
       scene.add(mesh)
 
       /* 渲染 */
       setTimeout(function () {
         renderer.render(scene, camera)
-      }, 300)
+      }, 1000)
       controls.addEventListener('change', () => renderer.render(scene, camera))
       // invalidation.then(() => (controls.dispose(), renderer.dispose()))
 
@@ -113,7 +116,7 @@ export default {
     }
   },
   async mounted () {
-    await this.init()
+    this.init()
   },
   beforeDestroy () {
     controls.dispose()

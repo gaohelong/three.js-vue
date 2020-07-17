@@ -1,8 +1,9 @@
 <template>
   <section class="container">
-    <div>X、Y、Z轴旋转</div>
-    <div class="three"></div>
+    <div class="three" @click="mousemoveProc"></div>
     <section>
+      <button class="btn" @click="freeMove(false)">水平移动</button>
+      <button class="btn" @click="freeMove(true)">自由移动</button>
       <button class="btn" @click="rotation('x')">绕局部空间的X轴旋转这个</button>
       <button class="btn" @click="rotation('y')">绕局部空间的Y轴旋转这个</button>
       <button class="btn" @click="rotation('z')">绕局部空间的Z轴旋转这个</button>
@@ -18,13 +19,28 @@ const OrbitControls = require('three-orbit-controls')(THREE)
 let renderer, controls, camera
 let mesh, scene
 let requestAnimationFrameVal
+// let angleAzimuthalVal, polarAngleVal
+// let cameraInitialPosition, cameraInitialRotation
+let raycaster, mouse
 
 export default {
-  name: 'Three3',
+  name: 'Three5',
   data () {
     return {}
   },
   methods: {
+    mousemoveProc (e) {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+
+      console.log(mouse)
+    },
+    reset () {
+      this.clearAnimationFrame()
+      controls.reset()
+      // camera.position.set(cameraInitialPosition)
+      // camera.rotation.set(cameraInitialRotation)
+    },
     freeMove (type) {
       this.clearAnimationFrame()
       if (type) {
@@ -154,6 +170,10 @@ export default {
 
       document.querySelector('.three').appendChild(renderer.domElement)
       // document.body.appendChild(renderer.domElement)
+
+      /* 光线投射 */
+      raycaster = new THREE.Raycaster()
+      mouse = new THREE.Vector2()
     },
     async loadTexture (url) {
       const loader = new THREE.TextureLoader()
@@ -168,6 +188,15 @@ export default {
       // mesh.translateZ(0.001) // 沿着Z轴将平移
       requestAnimationFrameVal = window.requestAnimationFrame(this.animation) // 请求再次执行渲染函数render
       renderer.render(scene, camera) // 执行渲染操作
+
+      // 通过摄像机和鼠标位置更新射线
+      raycaster.setFromCamera(mouse, camera)
+
+      // 计算物体和射线的焦点
+      var intersects = raycaster.intersectObjects(scene.children)
+      for (var i = 0; i < intersects.length; i++) {
+        intersects[i].object.material.color.set(0xff0000)
+      }
     }
   },
   async mounted () {
