@@ -1,6 +1,6 @@
 <template>
   <section class="container">
-    <div>图层映射</div>
+    <div>图层映射-three</div>
     <div class="three" @click="mousemoveProc"></div>
     <section>
       <button class="btn" @click="freeMove(false)">水平移动</button>
@@ -15,7 +15,7 @@
 <script>
 import * as THREE from 'three'
 import img2k from '@/assets/2k_earth_daymap.jpg'
-import aircraftImg from '@/assets/aircraft.jpg'
+import aircraftImg from '@/assets/act.jpg'
 const OrbitControls = require('three-orbit-controls')(THREE)
 
 let renderer, controls, camera
@@ -128,7 +128,7 @@ export default {
       scene = new THREE.Scene()
 
       // 非PC端, 只添加一个天空光, 天空光从正上方往下照, 可以照出明暗对比, 但是不产生阴影
-      const hemisphereLight = new THREE.HemisphereLight(0xffffff, 1.6)
+      const hemisphereLight = new THREE.HemisphereLight(0xffffff, 50)
       scene.add(hemisphereLight)
 
       /* 相机 */
@@ -165,6 +165,15 @@ export default {
       // angleAzimuthalVal = controls.getAzimuthalAngle() // 获得当前的水平旋转，单位为弧度。
       // polarAngleVal = controls.getPolarAngle() // 获得当前的垂直旋转，单位为弧度。
 
+      /* 分组 */
+      // const group = new THREE.Group()
+
+      /* 细节 */
+      // const lod = new THREE.LOD()
+
+      /* 合并模型，则使用merge方法合并 */
+      // const geometry = new THREE.Geometry()
+
       /* 本地图片、网络获取图片 */
       const loader = new THREE.TextureLoader()
       const map = await loader.load(
@@ -186,11 +195,16 @@ export default {
       mesh = new THREE.Mesh(new THREE.SphereBufferGeometry(1, 32, 32), new THREE.MeshBasicMaterial({
         map
       }))
+      // lod.addLevel(mesh, 75)
       // mesh.rotation.x = 0
       // mesh.rotation.y = 0
       // mesh.position.z = 0
       mesh.rotateY(100) // 绕y轴旋转100弧度
-      scene.add(mesh) // 往场景里添加材质.
+      // mesh.lookAt(0, 0, 0)
+      // mesh.position.set(0.5, 0.5, 0)
+      // group.add(mesh) // 往场景里添加材质.
+      scene.add(mesh)
+      // geometry.merge(mesh.geometry, mesh.matrix)
 
       /* 添加物体 */
       const map1 = await loader.load(
@@ -201,20 +215,66 @@ export default {
         }
       )
 
-      // 球形
-      const geometry = new THREE.PlaneGeometry(0.5, 0.5, 10)
-      geometry.name = 'fly-yibao'
-      const object = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({
+      // 飞机
+      const planeGeometry = new THREE.PlaneGeometry(0.3, 0.3)
+      planeGeometry.name = 'fly-yibao'
+      const mesh2 = new THREE.Mesh(planeGeometry, new THREE.MeshLambertMaterial({
         map: map1
       }))
+      // lod.addLevel(mesh2, 150)
 
-      const positionInfo = this.getPosition(108, 20, 1)
-      // const positionInfo = { x:0.11506914291592064, y: 1.5860120237771995, z: -2.0571062350896994}
-      console.log(positionInfo)
+      // const positionInfo = this.getPosition(108, 20, 1)
+      const positionInfo = {
+        x: -0.0033133768336965066,
+        y: 0.010556110602106707,
+        z: 1 // 和地球贴合
+      }
+      // console.log(positionInfo)
 
-      object.position.copy(positionInfo)
-      object.lookAt(0, 0, 0)
-      scene.add(object)
+      mesh2.position.copy(positionInfo)
+      // mesh2.rotation.x = 1
+      // mesh2.rotation.y = 1
+      // mesh2.rotation.z = 0
+
+      // mesh2.scale.x = 1
+      // mesh2.scale.y = 1
+      // mesh2.scale.z = 1
+
+      // mesh2.lookAt(0, 0, 0)
+      scene.add(mesh2)
+
+      // group.add(mesh2)
+
+      // const material = new THREE.MeshLambertMaterial({
+      //   color: 0xf33f66
+      // })
+      // geometry.merge(mesh2.geometry, mesh2.matrix)
+      // const meshs = new THREE.Mesh(geometry, material)
+      // meshs.position.z -= 5
+      // scene.add(meshs)
+
+      // 飞机2
+      // const map2 = await loader.load(
+      //   aircraftImg, // 本地图片
+      //   // onLoad回调
+      //   function (texture) {
+      //     return texture
+      //   }
+      // )
+      // const planeGeometry2 = new THREE.PlaneGeometry(0.3, 0.3)
+      // planeGeometry2.name = 'fly-jiaoyu'
+      // const mesh3 = new THREE.Mesh(planeGeometry2, new THREE.MeshLambertMaterial({
+      //   map: map2
+      // }))
+      // const positionInfo2 = {
+      //   x: -0.00022089178891310354,
+      //   y: 0.049578237105187994,
+      //   z: 1 // 和地球贴合
+      // }
+      // mesh3.position.copy(positionInfo2)
+      // scene.add(mesh3)
+
+      // scene.add(group)
 
       /* UV */
 
