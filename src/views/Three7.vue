@@ -41,6 +41,7 @@ export default {
       // console.log(mesh)
 
       scene.remove(mesh1) // 移除指定的mesh
+
       let mp
       switch (num) {
         case 1:
@@ -91,7 +92,7 @@ export default {
         console.log(intersects[0].object)
         // console.log(intersects[0].object.geometry)
         // console.log(intersects[0].object.geometry.type)
-        if (intersects[0].object.geometry && intersects[0].object.geometry.type === 'PlaneGeometry') {
+        if (intersects[0].object.geometry && intersects[0].object.geometry.type === 'PlaneBufferGeometry') {
           console.log(intersects[0].object.geometry.name)
         }
       }
@@ -269,7 +270,7 @@ export default {
       )
 
       // 飞机
-      const planeGeometry = new THREE.PlaneGeometry(0.3, 0.3)
+      const planeGeometry = new THREE.PlaneBufferGeometry(0.3, 0.3)
       planeGeometry.name = 'fly-yibao'
       mesh1 = new THREE.Mesh(planeGeometry, new THREE.MeshLambertMaterial({
         map: map2
@@ -284,8 +285,8 @@ export default {
       // }
       positionInfo.z = 1
       // console.log(positionInfo)
-
       mesh1.position.copy(positionInfo)
+      // mesh1.rotateY(60)
       // mesh1.rotation.x = 1
       // mesh1.rotation.y = 1
       // mesh1.rotation.z = 0
@@ -308,7 +309,7 @@ export default {
       // scene.add(meshs)
 
       // 飞机2
-      const planeGeometry2 = new THREE.PlaneGeometry(0.3, 0.3)
+      const planeGeometry2 = new THREE.PlaneBufferGeometry(0.3, 0.3)
       planeGeometry2.name = 'fly-jiaoyu'
       const mesh2 = new THREE.Mesh(planeGeometry2, new THREE.MeshLambertMaterial({
         map: map1
@@ -321,7 +322,7 @@ export default {
       scene.add(mesh2)
 
       // 飞机3
-      const planeGeometry3 = new THREE.PlaneGeometry(0.3, 0.3)
+      const planeGeometry3 = new THREE.PlaneBufferGeometry(0.3, 0.3)
       planeGeometry3.name = 'fly-yiliao'
       const mesh3 = new THREE.Mesh(planeGeometry2, new THREE.MeshLambertMaterial({
         map: map2
@@ -334,7 +335,7 @@ export default {
       scene.add(mesh3)
 
       // 飞机4
-      const planeGeometry4 = new THREE.PlaneGeometry(0.3, 0.3)
+      const planeGeometry4 = new THREE.PlaneBufferGeometry(0.3, 0.3)
       planeGeometry4.name = 'fly-shengyu'
       const mesh4 = new THREE.Mesh(planeGeometry4, new THREE.MeshLambertMaterial({
         map: map1
@@ -347,7 +348,7 @@ export default {
       scene.add(mesh4)
 
       // 飞机5
-      const planeGeometry5 = new THREE.PlaneGeometry(0.3, 0.3)
+      const planeGeometry5 = new THREE.PlaneBufferGeometry(0.3, 0.3)
       planeGeometry5.name = 'fly-xiuxian'
       const mesh5 = new THREE.Mesh(planeGeometry5, new THREE.MeshLambertMaterial({
         map: map2
@@ -360,7 +361,7 @@ export default {
       scene.add(mesh5)
 
       // 飞机6
-      const planeGeometry6 = new THREE.PlaneGeometry(0.3, 0.3)
+      const planeGeometry6 = new THREE.PlaneBufferGeometry(0.3, 0.3)
       planeGeometry6.name = 'fly-dianying'
       const mesh6 = new THREE.Mesh(planeGeometry6, new THREE.MeshLambertMaterial({
         map: map1
