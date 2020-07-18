@@ -3,11 +3,12 @@
     <div>图层映射-two</div>
     <div class="three" @click="mousemoveProc"></div>
     <section>
+      <button class="btn" @click="reset">回到初始位置</button>
       <button class="btn" @click="freeMove(false)">水平移动</button>
       <button class="btn" @click="freeMove(true)">自由移动</button>
-      <button class="btn" @click="rotation('x')">绕局部空间的X轴旋转这个</button>
-      <button class="btn" @click="rotation('y')">绕局部空间的Y轴旋转这个</button>
-      <button class="btn" @click="rotation('z')">绕局部空间的Z轴旋转这个</button>
+      <button class="btn" @click="changeImg(1)">改变图1图片-1</button>
+      <button class="btn" @click="changeImg(2)">改变图1图片-2</button>
+      <button class="btn" @click="changeImg(3)">改变图1图片-3</button>
     </section>
   </section>
 </template>
@@ -16,14 +17,18 @@
 import * as THREE from 'three'
 import img2k from '@/assets/2k_earth_daymap.jpg'
 import aircraftImg from '@/assets/act.jpg'
+import aircraftImg2 from '@/assets/act2.jpg'
+import aircraftImg3 from '@/assets/act3.jpg'
 const OrbitControls = require('three-orbit-controls')(THREE)
 
-let renderer, controls, camera
-let mesh, scene
+let renderer, controls, camera, scene
+let mesh, mesh1
 let requestAnimationFrameVal
 // let angleAzimuthalVal, polarAngleVal
 // let cameraInitialPosition, cameraInitialRotation
 let raycaster, mouse
+
+let map1, map2, map3
 
 export default {
   name: 'Three5',
@@ -31,6 +36,37 @@ export default {
     return {}
   },
   methods: {
+    changeImg (num) {
+      // console.log(map3)
+      // console.log(mesh)
+
+      scene.remove(mesh1) // 移除指定的mesh
+      let mp
+      switch (num) {
+        case 1:
+          mp = map1
+          break
+        case 2:
+          mp = map2
+          break
+        default:
+          mp = map3
+      }
+
+      const planeGeometry = new THREE.PlaneGeometry(0.3, 0.3)
+      planeGeometry.name = 'fly-yibao'
+      mesh1 = new THREE.Mesh(planeGeometry, new THREE.MeshLambertMaterial({
+        map: mp
+      }))
+
+      const positionInfo = this.getPosition(65, 170, 1) // 经度、纬度、z轴
+      positionInfo.z = 1 // 和地球贴合
+      mesh1.position.copy(positionInfo)
+      mesh1.lookAt(0, 0, 0)
+      scene.add(mesh1)
+
+      renderer.render(scene, camera)
+    },
     mousemoveProc (e) {
       // 将鼠标点击位置的屏幕坐标转成threejs中的标准坐标,具体解释见代码释义
       mouse.x = (e.clientX / window.innerWidth) * 2 - 1
@@ -127,9 +163,10 @@ export default {
       /* 场景 */
       scene = new THREE.Scene()
 
-      // 非PC端, 只添加一个天空光, 天空光从正上方往下照, 可以照出明暗对比, 但是不产生阴影
-      const hemisphereLight = new THREE.HemisphereLight(0xffffff, 50)
-      scene.add(hemisphereLight)
+      /* 灯光 */
+      // 环境光会均匀的照亮场景中的所有物体。
+      const ambientLight = new THREE.AmbientLight(0xffffff)
+      scene.add(ambientLight)
 
       /* 相机 */
       camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000).translateZ(2.8)
@@ -207,8 +244,24 @@ export default {
       // geometry.merge(mesh.geometry, mesh.matrix)
 
       /* 添加物体 */
-      const map1 = await loader.load(
+      map1 = await loader.load(
         aircraftImg, // 本地图片
+        // onLoad回调
+        function (texture) {
+          return texture
+        }
+      )
+
+      map2 = await loader.load(
+        aircraftImg2, // 本地图片
+        // onLoad回调
+        function (texture) {
+          return texture
+        }
+      )
+
+      map3 = await loader.load(
+        aircraftImg3, // 本地图片
         // onLoad回调
         function (texture) {
           return texture
@@ -218,61 +271,106 @@ export default {
       // 飞机
       const planeGeometry = new THREE.PlaneGeometry(0.3, 0.3)
       planeGeometry.name = 'fly-yibao'
-      const mesh2 = new THREE.Mesh(planeGeometry, new THREE.MeshLambertMaterial({
-        map: map1
+      mesh1 = new THREE.Mesh(planeGeometry, new THREE.MeshLambertMaterial({
+        map: map2
       }))
-      // lod.addLevel(mesh2, 150)
+      // lod.addLevel(mesh1, 150)
 
-      // const positionInfo = this.getPosition(108, 20, 1)
-      const positionInfo = {
-        x: -0.0033133768336965066,
-        y: 0.010556110602106707,
-        z: 1 // 和地球贴合
-      }
+      const positionInfo = this.getPosition(65, 170, 1) // 经度、纬度、z轴
+      // const positionInfo = {
+      //   x: -0.0033133768336965066,
+      //   y: 0.010556110602106707,
+      //   z: 1 // 和地球贴合
+      // }
+      positionInfo.z = 1
       // console.log(positionInfo)
 
-      mesh2.position.copy(positionInfo)
-      // mesh2.rotation.x = 1
-      // mesh2.rotation.y = 1
-      // mesh2.rotation.z = 0
+      mesh1.position.copy(positionInfo)
+      // mesh1.rotation.x = 1
+      // mesh1.rotation.y = 1
+      // mesh1.rotation.z = 0
 
-      // mesh2.scale.x = 1
-      // mesh2.scale.y = 1
-      // mesh2.scale.z = 1
+      // mesh1.scale.x = 1
+      // mesh1.scale.y = 1
+      // mesh1.scale.z = 1
 
-      // mesh2.lookAt(0, 0, 0)
-      scene.add(mesh2)
+      mesh1.lookAt(0, 0, 0)
+      scene.add(mesh1)
 
-      // group.add(mesh2)
+      // group.add(mesh1)
 
       // const material = new THREE.MeshLambertMaterial({
       //   color: 0xf33f66
       // })
-      // geometry.merge(mesh2.geometry, mesh2.matrix)
+      // geometry.merge(mesh1.geometry, mesh1.matrix)
       // const meshs = new THREE.Mesh(geometry, material)
       // meshs.position.z -= 5
       // scene.add(meshs)
 
       // 飞机2
-      // const map2 = await loader.load(
-      //   aircraftImg, // 本地图片
-      //   // onLoad回调
-      //   function (texture) {
-      //     return texture
-      //   }
-      // )
-      // const planeGeometry2 = new THREE.PlaneGeometry(0.3, 0.3)
-      // planeGeometry2.name = 'fly-jiaoyu'
-      // const mesh3 = new THREE.Mesh(planeGeometry2, new THREE.MeshLambertMaterial({
-      //   map: map2
-      // }))
-      // const positionInfo2 = {
-      //   x: -0.00022089178891310354,
-      //   y: 0.049578237105187994,
-      //   z: 1 // 和地球贴合
-      // }
-      // mesh3.position.copy(positionInfo2)
-      // scene.add(mesh3)
+      const planeGeometry2 = new THREE.PlaneGeometry(0.3, 0.3)
+      planeGeometry2.name = 'fly-jiaoyu'
+      const mesh2 = new THREE.Mesh(planeGeometry2, new THREE.MeshLambertMaterial({
+        map: map1
+      }))
+      const positionInfo2 = this.getPosition(90, 170, 1) // 经度、纬度、z轴
+      positionInfo2.z = 1 // 和地球贴合
+      mesh2.position.copy(positionInfo2)
+      // console.log(positionInfo2)
+      mesh2.lookAt(0, 0, 0)
+      scene.add(mesh2)
+
+      // 飞机3
+      const planeGeometry3 = new THREE.PlaneGeometry(0.3, 0.3)
+      planeGeometry3.name = 'fly-yiliao'
+      const mesh3 = new THREE.Mesh(planeGeometry2, new THREE.MeshLambertMaterial({
+        map: map2
+      }))
+      const positionInfo3 = this.getPosition(115, 170, 1) // 经度、纬度、z轴
+      positionInfo3.z = 1 // 和地球贴合
+      mesh3.position.copy(positionInfo3)
+      // console.log(positionInfo3)
+      mesh3.lookAt(0, 0, 0)
+      scene.add(mesh3)
+
+      // 飞机4
+      const planeGeometry4 = new THREE.PlaneGeometry(0.3, 0.3)
+      planeGeometry4.name = 'fly-shengyu'
+      const mesh4 = new THREE.Mesh(planeGeometry4, new THREE.MeshLambertMaterial({
+        map: map1
+      }))
+      const positionInfo4 = this.getPosition(65, 190, 1) // 经度、纬度、z轴
+      positionInfo4.z = 1 // 和地球贴合
+      mesh4.position.copy(positionInfo4)
+      // console.log(positionInfo4)
+      mesh4.lookAt(0, 0, 0)
+      scene.add(mesh4)
+
+      // 飞机5
+      const planeGeometry5 = new THREE.PlaneGeometry(0.3, 0.3)
+      planeGeometry5.name = 'fly-xiuxian'
+      const mesh5 = new THREE.Mesh(planeGeometry5, new THREE.MeshLambertMaterial({
+        map: map2
+      }))
+      const positionInfo5 = this.getPosition(90, 190, 1) // 经度、纬度、z轴
+      positionInfo5.z = 1 // 和地球贴合
+      mesh5.position.copy(positionInfo5)
+      // console.log(positionInfo5)
+      mesh5.lookAt(0, 0, 0)
+      scene.add(mesh5)
+
+      // 飞机6
+      const planeGeometry6 = new THREE.PlaneGeometry(0.3, 0.3)
+      planeGeometry6.name = 'fly-dianying'
+      const mesh6 = new THREE.Mesh(planeGeometry6, new THREE.MeshLambertMaterial({
+        map: map1
+      }))
+      const positionInfo6 = this.getPosition(115, 190, 1) // 经度、纬度、z轴
+      positionInfo6.z = 1 // 和地球贴合
+      mesh6.position.copy(positionInfo6)
+      // console.log(positionInfo6)
+      mesh6.lookAt(0, 0, 0)
+      scene.add(mesh6)
 
       // scene.add(group)
 
