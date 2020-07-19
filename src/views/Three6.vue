@@ -26,7 +26,7 @@ let requestAnimationFrameVal
 let raycaster, mouse
 
 export default {
-  name: 'Three5',
+  name: 'Three6',
   data () {
     return {}
   },

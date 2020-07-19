@@ -31,7 +31,7 @@ let raycaster, mouse
 let map1, map2, map3
 
 export default {
-  name: 'Three5',
+  name: 'Three7',
   data () {
     return {}
   },
