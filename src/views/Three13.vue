@@ -89,7 +89,7 @@
 
         console.log(intersects)
         if (intersects.length > 0) {
-          let seledName = intersects[0].object.name
+          const seledName = intersects[0].object.name
           intersects.forEach((v, i) => {
             console.log(`${i}: ${v.object.name}`)
           })
