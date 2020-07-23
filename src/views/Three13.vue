@@ -1,6 +1,6 @@
 <template>
   <section class="container">
-    <div>Glft-水平-物体替换-改变物体颜色</div>
+    <div>Glft-水平-物体替换-替换成真实物体</div>
     <div class="three" @click="clickProc"></div>
     <section>
       <button class="btn" @click="reset">回到初始位置</button>
@@ -89,22 +89,11 @@
 
         console.log(intersects)
         if (intersects.length > 0) {
-          let seled = {}
+          let seledName = intersects[0].object.name
           intersects.forEach((v, i) => {
-            if (i === 0) {
-              seled = v.object
-            }
             console.log(`${i}: ${v.object.name}`)
           })
-
-          // 替换
-          const material = new THREE.MeshLambertMaterial({
-            color: 0xffffff * Math.random(),
-            transparent: false,
-            opacity: 0.8
-          })
-          seled.material = material
-          console.log(seled)
+          qiuGroup.remove(qiuGroup.children[0])
           renderer.render(scene, camera)
         }
 

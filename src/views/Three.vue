@@ -32,7 +32,10 @@
         <router-link to="/three11">Glft-点击</router-link>
       </div>
       <div class="item">
-        <router-link to="/three12">Glft-物体替换</router-link>
+        <router-link to="/three12">Glft-水平-物体替换-改变物体颜色</router-link>
+      </div>
+      <div class="item">
+        <router-link to="/three13">Glft-水平-物体替换-替换成真实物体</router-link>
       </div>
     </div>
     <router-view />
