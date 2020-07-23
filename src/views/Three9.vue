@@ -21,6 +21,7 @@
   import aircraftImg2 from '@/assets/act2.jpg'
   import aircraftImg3 from '@/assets/act3.jpg'
   import pfImg from '@/assets/pf.png'
+  // import fgImg from '@/assets/fg.jpg'
   const OrbitControls = require('three-orbit-controls')(THREE)
 
   let renderer, controls, camera, scene
@@ -56,6 +57,10 @@
             controls.maxPolarAngle = Math.PI // 你能够垂直旋转的角度的上限，范围是0到Math.PI，其默认值为Math.PI。
             break
           default:
+            // 限制水平移动.
+            controls.minPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的下限，范围是0到Math.PI，其默认值为0。
+            controls.maxPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的上限，范围是0到Math.PI，其默认值为Math.PI。
+
             // 限制左右旋转角度
             controls.minAzimuthAngle = -Math.PI / 12
             controls.maxAzimuthAngle = Math.PI / 12
@@ -234,8 +239,33 @@
         /* Geometry 是一个便于用户使用的 BufferGeometry 的替代品 */
         // const geometrys = new THREE.Geometry()
 
+        const light = new THREE.PointLight(0xff0000, 1, 100)
+        light.position.set(50, 50, 0)
+        scene.add(light)
+
         /* 本地图片、网络获取图片 */
         const loader = new THREE.TextureLoader()
+
+        /* 发光 */
+        // const meshFgMap = await loader.load(
+        //   fgImg, // 本地图片
+        //   // onLoad回调
+        //   function (texture) {
+        //     return texture
+        //   }
+        // )
+        // const fgMeshBasicMaterial = new THREE.MeshBasicMaterial({
+        //   map: meshFgMap
+        // })
+        // // fgMeshBasicMaterial.transparent = true // 是否透明
+        // // fgMeshBasicMaterial.opacity = 1 // 透明度
+        // // console.log(fgMeshBasicMaterial.geometry)
+
+        // const meshFg = new THREE.Mesh(new THREE.SphereBufferGeometry(1, 32, 32), fgMeshBasicMaterial)
+        // // meshFg.position.z = 0.05
+        // scene.add(meshFg)
+
+        /* 地球材质 */
         const map = await loader.load(
           // 资源URL
           // 'https://www.solarsystemscope.com/textures/download/2k_earth_daymap.jpg', // 网络获取图片
@@ -251,10 +281,12 @@
           }
         )
 
-        /* 材质 */
-        mesh = new THREE.Mesh(new THREE.SphereBufferGeometry(1, 32, 32), new THREE.MeshBasicMaterial({
+        const dqMeshBasicMaterial = new THREE.MeshBasicMaterial({
           map
-        }))
+        })
+        dqMeshBasicMaterial.transparent = true // 是否透明
+        dqMeshBasicMaterial.opacity = 1 // 透明度
+        mesh = new THREE.Mesh(new THREE.SphereBufferGeometry(1, 32, 32), dqMeshBasicMaterial)
         // lod.addLevel(mesh, 75)
         // mesh.rotation.x = 0
         // mesh.rotation.y = 0

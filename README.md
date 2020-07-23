@@ -1,6 +1,13 @@
 # Three.js + Vue
-[Three.js中文网](http://www.webgl3d.cn/)
+[Three.js中文网](http://www.webgl3d.cn/)<br>
 [Three.js电子书](http://www.webgl3d.cn/)
+
+# npm
+three<br>
+three-gltf-loader<br>
+exports-loader<br>
+imports-loader<br>
+...
 
 
 # eslint配置

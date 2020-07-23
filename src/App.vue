@@ -11,13 +11,14 @@
 
 <style lang="scss">
   body {
-    background-color: #e4e4e4;
-
+    background-color: rgb(0 0 0 / 0.5);
+    color: #ffffff;
     // background: url(assets/bg.png) no-repeat;
     // background-size: cover;
     button {
       border: 0;
     }
+
   }
 
   #app {

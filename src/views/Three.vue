@@ -29,7 +29,7 @@
         <router-link to="/three10">第九个示例</router-link>
       </div>
       <div class="item">
-        <router-link to="/three11">第时个示例</router-link>
+        <router-link to="/three11">第十个示例</router-link>
       </div>
     </div>
     <router-view />
