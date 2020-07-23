@@ -26,10 +26,13 @@
         <router-link to="/three9">第八个示例</router-link>
       </div>
       <div class="item">
-        <router-link to="/three10">第九个示例</router-link>
+        <router-link to="/three10">Glft-导入</router-link>
       </div>
       <div class="item">
-        <router-link to="/three11">第十个示例</router-link>
+        <router-link to="/three11">Glft-点击</router-link>
+      </div>
+      <div class="item">
+        <router-link to="/three12">Glft-物体替换</router-link>
       </div>
     </div>
     <router-view />

@@ -11,6 +11,8 @@
 
 <style lang="scss">
   body {
+    margin: 0;
+    padding: 0;
     background-color: rgb(0 0 0 / 0.5);
     color: #ffffff;
     // background: url(assets/bg.png) no-repeat;

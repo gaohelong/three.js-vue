@@ -77,6 +77,11 @@ const routes = [
     path: '/three11',
     name: 'Three11',
     component: () => import('../views/Three11.vue')
+  },
+  {
+    path: '/three12',
+    name: 'Three12',
+    component: () => import('../views/Three12.vue')
   }
 ]
 

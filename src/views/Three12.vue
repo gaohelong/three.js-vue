@@ -1,6 +1,6 @@
 <template>
   <section class="container">
-    <div>gltf物体选取(但是点击范围还有一些问题)</div>
+    <div>gltf-物体替换</div>
     <div class="three" @click="clickProc"></div>
     <section>
       <button class="btn" @click="reset">回到初始位置</button>
@@ -28,7 +28,7 @@
   const mouse = new THREE.Vector2()
 
   export default {
-    name: 'Three11',
+    name: 'Three12',
     data() {
       return {}
     },
@@ -71,19 +71,19 @@
         mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
         console.log('mouse-v2:', mouse)
 
-        // z轴
+        // 新建一个三维单位向量 假设z方向就是0, 根据照相机，把这个向量转换到视点坐标系
         const vector = new THREE.Vector3(mouse.x, mouse.y, 0).unproject(camera)
-        console.log(camera.position, vector.sub(camera.position).normalize())
-        raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
-        // raycaster.setFromCamera(vector, camera)
-        // camera.lookAt({
-        //   x: 0,
-        //   y: 0,
-        //   z: 0
-        // })
-        console.log('mouse-v3:', vector)
+        // console.log(camera.position, vector.sub(camera.position).normalize())
 
+        // 在视点坐标系中形成射线,射线的起点向量是照相机， 射线的方向向量是照相机到点击的点，这个向量应该归一标准化。
+        raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
+
+        // 用一个新的原点和方向向量来更新射线（ray），用照相机的原点和点击的点构成一条直线。Vector2
+        raycaster.setFromCamera(mouse, camera)
+
+        // console.log('mouse-v3:', vector)
         // console.log(qiuGroup.children)
+
         // 获取与raycaster射线相交的数组集合，其中的元素按照距离排序，越近的越靠前
         const intersects = raycaster.intersectObjects(qiuGroup.children, true) // 遍历子元素
 
@@ -152,11 +152,6 @@
         /* 分组 */
         qiuGroup = new THREE.Group()
 
-        /* 灯光 */
-        // 环境光会均匀的照亮场景中的所有物体。
-        const ambientLight = new THREE.AmbientLight(0xffffff)
-        scene.add(ambientLight)
-
         /* 声明 raycaster 和 mouse */
         raycaster = new THREE.Raycaster()
 
@@ -164,7 +159,7 @@
         camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000)
         // camera.translateX(0)
         // camera.translateY(0)
-        camera.translateZ(2.8)
+        camera.translateZ(2.8) // 摄像机距离物体远、近
         // raycaster.setFromCamera(mouse, camera)
 
         /* 控制器 */
@@ -189,9 +184,30 @@
         controls.minPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的下限，范围是0到Math.PI，其默认值为0。
         controls.maxPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的上限，范围是0到Math.PI，其默认值为Math.PI。
 
-        const light = new THREE.PointLight(0xff0000, 1, 100)
-        light.position.set(50, 50, 0)
-        scene.add(light)
+        /* 灯光 */
+        // const light = new THREE.PointLight(0xff0000, 1, 100)
+        // light.position.set(50, 50, 0)
+        // scene.add(light)
+
+        /* 灯光 */
+        // 环境光会均匀的照亮场景中的所有物体。
+        // const ambientLight = new THREE.AmbientLight(0xffffff)
+        // scene.add(ambientLight)
+
+        /* 灯光 */
+        const spotLight = new THREE.SpotLight(0xffffff)
+        spotLight.position.set(1000, 1000, 1000)
+        spotLight.castShadow = true
+        spotLight.shadow.mapSize.width = 1024
+        spotLight.shadow.mapSize.height = 1024
+        spotLight.shadow.camera.near = 1
+        spotLight.shadow.camera.far = 4000
+        spotLight.shadow.camera.fov = 1000
+        scene.add(spotLight)
+
+        /* 灯光 */
+        // const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+        // scene.add(directionalLight)
 
         /* 用于简单模拟3个坐标轴的对象. 红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴. */
         const axesHelper = new THREE.AxesHelper(5)
@@ -213,13 +229,13 @@
         scene.add(helper)
 
         /* 创建一个虚拟的球形网格 Mesh 的辅助对象来模拟 点光源 PointLight. */
-        const pointLight = new THREE.PointLight(0xff0000, 1, 100)
-        pointLight.position.set(10, 10, 10)
-        scene.add(pointLight)
+        // const pointLight = new THREE.PointLight(0xff0000, 1, 100)
+        // pointLight.position.set(10, 10, 10)
+        // scene.add(pointLight)
 
-        const sphereSize = 1
-        const pointLightHelper = new THREE.PointLightHelper(pointLight, sphereSize)
-        scene.add(pointLightHelper)
+        // const sphereSize = 1
+        // const pointLightHelper = new THREE.PointLightHelper(pointLight, sphereSize)
+        // scene.add(pointLightHelper)
 
         /* 本地图片、网络获取图片 */
         const loader = new THREE.TextureLoader()
