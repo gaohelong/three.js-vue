@@ -61,6 +61,7 @@
         controls.reset()
       },
       clickProc(e) {
+        console.clear()
         // event.preventDefault()
         console.log('e.clientX:' + e.clientX)
         console.log('e.clientY:' + e.clientY)
@@ -70,8 +71,16 @@
         mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
         console.log('mouse-v2:', mouse)
 
+        // z轴
         const vector = new THREE.Vector3(mouse.x, mouse.y, 0).unproject(camera)
+        console.log(camera.position, vector.sub(camera.position).normalize())
         raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
+        // raycaster.setFromCamera(vector, camera)
+        // camera.lookAt({
+        //   x: 0,
+        //   y: 0,
+        //   z: 0
+        // })
         console.log('mouse-v3:', vector)
 
         // console.log(qiuGroup.children)
@@ -79,6 +88,11 @@
         const intersects = raycaster.intersectObjects(qiuGroup.children, true) // 遍历子元素
 
         console.log(intersects)
+        if (intersects.length > 0) {
+          intersects.forEach((v, i) => {
+            console.log(`${i}: ${v.object.name}`)
+          })
+        }
 
         // 返回选中的对象数组
         // return intersects
@@ -172,8 +186,8 @@
         // polarAngleVal = controls.getPolarAngle() // 获得当前的垂直旋转，单位为弧度。
 
         // 限制水平移动.
-        // controls.minPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的下限，范围是0到Math.PI，其默认值为0。
-        // controls.maxPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的上限，范围是0到Math.PI，其默认值为Math.PI。
+        controls.minPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的下限，范围是0到Math.PI，其默认值为0。
+        controls.maxPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的上限，范围是0到Math.PI，其默认值为Math.PI。
 
         const light = new THREE.PointLight(0xff0000, 1, 100)
         light.position.set(50, 50, 0)
@@ -255,7 +269,7 @@
         // })
         // const self = this
         loader.load(
-          '/3dm/qiuzuhe.glb',
+          '/3dm/qiuqiu.gltf',
           // 'https://a.amap.com/jsapi_demos/static/gltf/Duck.gltf',
           (gltf) => {
             // console.log(gltf)
@@ -279,6 +293,7 @@
 
             // called when the resource is loaded
             // scene.add(gltf.scene)
+            // qiuGroup.position.copy(this.getPosition(180, 180, 1))
             scene.add(qiuGroup)
           },
           (xhr) => {
