@@ -89,14 +89,24 @@
 
         console.log(intersects)
         if (intersects.length > 0) {
-          const seledName = intersects[0].object.name
+          const seledMeshName = intersects[0].object.name
           intersects.forEach((v, i) => {
             console.log(`${i}: ${v.object.name}`)
           })
-          qiuGroup.remove(qiuGroup.children[0])
-          renderer.render(scene, camera)
-        }
 
+          // 删除gltf Mesh
+          let removeMesh
+          qiuGroup.children.forEach((v, i) => {
+            if (seledMeshName === v.name) {
+              removeMesh = v
+            }
+          })
+          qiuGroup.remove(removeMesh)
+          console.log(qiuGroup)
+
+          // 添加新的gltf Mesh
+          this.addGltf('qiuqiu-1.gltf')
+        }
         // 返回选中的对象数组
         // return intersects
       },
@@ -338,6 +348,38 @@
         //     scene.add(obj)
         //   })
         // })
+      },
+      addGltf(name) {
+        /* 加载gltf */
+        const loader = new GLTFLoader()
+        loader.setPath('/3dm/')
+        loader.load(
+          name,
+          (gltf) => {
+            // console.log(gltf)
+            gltf.scene.traverse(function (child) {
+              // console.log(child)
+              if (child.isMesh) {
+                groupArr.push(child)
+              }
+            })
+            // 遍历添加
+            groupArr.map(v => {
+              qiuGroup.add(v)
+            })
+            scene.add(qiuGroup)
+          },
+          (xhr) => {
+            const p = xhr.loaded / xhr.total * 100
+            console.log(`${p}% loaded`)
+          },
+          (error) => {
+            console.error('An error happened', error)
+          }
+        )
+
+        // render
+        renderer.render(scene, camera)
       },
       async loadTexture (url) {
         const loader = new THREE.TextureLoader()
