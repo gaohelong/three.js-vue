@@ -37,6 +37,12 @@
       <div class="item">
         <router-link to="/three13">Glft-水平-物体替换-替换成真实物体</router-link>
       </div>
+      <div class="item">
+        <router-link to="/three14">Glft-水平-物体替换-改变物体颜色2</router-link>
+      </div>
+      <div class="item">
+        <router-link to="/three15">Glft-水平-物体替换-改变物体颜色3</router-link>
+      </div>
     </div>
     <router-view />
   </div>

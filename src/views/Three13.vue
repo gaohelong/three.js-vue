@@ -28,7 +28,7 @@
   const mouse = new THREE.Vector2()
 
   export default {
-    name: 'Three12',
+    name: 'Three13',
     data() {
       return {}
     },
