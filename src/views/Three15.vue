@@ -97,15 +97,17 @@
             console.log(`${i}: ${v.object.name}`)
           })
 
-          // 替换
-          const material = new THREE.MeshLambertMaterial({
-            color: 0xffffff * Math.random(),
-            transparent: false,
-            opacity: 0.8
-          })
-          seled.material = material
-          console.log(seled)
-          renderer.render(scene, camera)
+          if (seled.name !== '球体') {
+            // 替换
+            const material = new THREE.MeshLambertMaterial({
+              color: 0xffffff * Math.random(),
+              transparent: false,
+              opacity: 0.8
+            })
+            seled.material = material
+            console.log(seled)
+            renderer.render(scene, camera)
+          }
         }
 
         // 返回选中的对象数组
@@ -178,7 +180,7 @@
 
         /* 控制器 */
         controls = new OrbitControls(camera, renderer.domElement)
-        controls.enableZoom = false // 启用或禁用摄像机的缩放。
+        controls.enableZoom = true // 启用或禁用摄像机的缩放。
         controls.maxZoom = 1 // 你能够将相机缩小多少
         controls.panSpeed = 1 // 位移的速度，其默认值为1。
         controls.minDistance = 0 // 你能够将相机向内移动多少（仅适用于PerspectiveCamera），其默认值为0。
@@ -200,15 +202,18 @@
 
         /* 灯光 */
         // const light = new THREE.PointLight(0xff0000, 1, 100)
-        // light.position.set(50, 50, 0)
+        // light.position.set(50, 50, 50)
         // scene.add(light)
 
         /* 灯光 */
         // 环境光会均匀的照亮场景中的所有物体。
-        // const ambientLight = new THREE.AmbientLight(0xffffff)
-        // scene.add(ambientLight)
+        const ambientLight = new THREE.AmbientLight(0xffffff)
+        scene.add(ambientLight)
 
-        /* 灯光 */
+        // const ambientLightProbeLight = new THREE.AmbientLightProbe(0xffffff)
+        // scene.add(ambientLightProbeLight)
+
+        /* 灯光-聚光灯 */
         // const spotLight = new THREE.SpotLight(0xffffff)
         // spotLight.position.set(10000, 10000, 10000)
         // spotLight.castShadow = true
@@ -224,8 +229,12 @@
         // scene.add(directionalLight)
 
         /* 半球光源 */
-        // const light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1)
-        // scene.add(light)
+        const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1)
+        scene.add(light)
+
+        // const hemiLight = new THREE.HemisphereLight(0x0000ff, 0x00ff00, 0.1)
+        // hemiLight.position.set(0, 0, 0)
+        // scene.add(hemiLight)
 
         /* 创建平行光源 */
         // const directionalLight = new THREE.DirectionalLight(0xffffff)
@@ -244,15 +253,20 @@
         const axesHelper = new THREE.AxesHelper(5)
         scene.add(axesHelper)
 
+        /* 光源辅助 */
+        const lightFz = new THREE.DirectionalLight(0xFFFFFF)
+        const helperFz = new THREE.DirectionalLightHelper(lightFz, 5)
+        scene.add(helperFz)
+
         /* 坐标格辅助对象. 坐标格实际上是2维线数组. */
-        const gridHelper = new THREE.GridHelper(10, 10, 0x040404, 0x123456)
-        scene.add(gridHelper)
+        // const gridHelper = new THREE.GridHelper(10, 10, 0x040404, 0x123456)
+        // scene.add(gridHelper)
 
         /* 用于图形化地展示对象世界轴心对齐的包围盒的辅助对象。 */
-        const sphere = new THREE.SphereBufferGeometry()
-        const object = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial(0xff0000))
-        const box = new THREE.BoxHelper(object, 0xffff00)
-        scene.add(box)
+        // const sphere = new THREE.SphereBufferGeometry()
+        // const object = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial(0xff0000))
+        // const box = new THREE.BoxHelper(object, 0xffff00)
+        // scene.add(box)
 
         /* 用于模拟相机视锥体的辅助对象. */
         const cameraHelper = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
@@ -263,6 +277,10 @@
         // const pointLight = new THREE.PointLight(0xffffff, 1, 100, 0)
         // pointLight.position.set(10, 10, 10)
         // scene.add(pointLight)
+
+        // const pointLight1 = new THREE.PointLight(0xffffff, 1, 100, 0)
+        // pointLight1.position.set(-10, -10, 10)
+        // scene.add(pointLight1)
 
         // const sphereSize = 1
         // const pointLightHelper = new THREE.PointLightHelper(pointLight, sphereSize)
@@ -297,6 +315,7 @@
 
         /* 渲染 */
         setTimeout(function() {
+          controls.update()
           renderer.render(scene, camera)
         }, 1000)
         controls.addEventListener('change', () => {
@@ -316,7 +335,7 @@
         // })
         // const self = this
         loader.load(
-          '/3dm/qiubaoguo3.gltf',
+          '/3dm/qiubaoguo4.gltf',
           // 'https://a.amap.com/jsapi_demos/static/gltf/Duck.gltf',
           (gltf) => {
             // console.log(gltf)
@@ -325,6 +344,14 @@
               if (child.isMesh) {
                 // console.log(qiuGroup)
                 // console.log(child)
+                if (child.name !== '球体') {
+                  const material = new THREE.MeshLambertMaterial({
+                    color: 0xffffff * Math.random(),
+                    transparent: false,
+                    opacity: 0.8
+                  })
+                  child.material = material
+                }
                 groupArr.push(child)
                 // console.log(groupArr)
                 // TOFIX RoughnessMipmapper seems to be broken with WebGL 2.0
