@@ -2,6 +2,9 @@
   <section class="container">
     <div>Glft-水平-物体替换-改变物体颜色3</div>
     <div class="three" @click="clickProc"></div>
+    <section class="progress" v-show="show">
+      <div class="percentage" :style="percentageObj"></div>
+    </section>
     <section>
       <button class="btn" @click="reset">回到初始位置</button>
       <button class="btn" @click="freeMove(1)">水平移动</button>
@@ -11,7 +14,7 @@
 </template>
 
 <script>
-  import img2k from '@/assets/2k_earth_daymap.jpg'
+  // import img2k from '@/assets/2k_earth_daymap.jpg'
   import * as THREE from 'three'
   // import { OBJLoader, MTLLoader } from 'three-obj-mtl-loader'
   import GLTFLoader from 'three-gltf-loader'
@@ -30,7 +33,12 @@
   export default {
     name: 'Three15',
     data() {
-      return {}
+      return {
+        show: true,
+        percentageObj: {
+          width: '0%'
+        }
+      }
     },
     methods: {
       freeMove(type) {
@@ -287,37 +295,37 @@
         // scene.add(pointLightHelper)
 
         /* 本地图片、网络获取图片 */
-        const loader = new THREE.TextureLoader()
+        // const loader = new THREE.TextureLoader()
 
         /* 地球材质 */
-        const map = await loader.load(
-          // 资源URL
-          // 'https://www.solarsystemscope.com/textures/download/2k_earth_daymap.jpg', // 网络获取图片
-          img2k, // 本地图片
-          // onLoad回调
-          function(texture) {
-            return texture
-          },
-          undefined,
-          // onError回调
-          function(error) {
-            console.error('An error happened.', error)
-          }
-        )
+        // const map = await loader.load(
+        //   // 资源URL
+        //   // 'https://www.solarsystemscope.com/textures/download/2k_earth_daymap.jpg', // 网络获取图片
+        //   img2k, // 本地图片
+        //   // onLoad回调
+        //   function(texture) {
+        //     return texture
+        //   },
+        //   undefined,
+        //   // onError回调
+        //   function(error) {
+        //     console.error('An error happened.', error)
+        //   }
+        // )
 
-        const dqMeshBasicMaterial = new THREE.MeshBasicMaterial({
-          map
-        })
-        dqMeshBasicMaterial.transparent = true // 是否透明
-        dqMeshBasicMaterial.opacity = 1 // 透明度
-        mesh = new THREE.Mesh(new THREE.SphereBufferGeometry(1, 32, 32), dqMeshBasicMaterial)
+        // const dqMeshBasicMaterial = new THREE.MeshBasicMaterial({
+        //   map
+        // })
+        // dqMeshBasicMaterial.transparent = true // 是否透明
+        // dqMeshBasicMaterial.opacity = 1 // 透明度
+        // mesh = new THREE.Mesh(new THREE.SphereBufferGeometry(1, 32, 32), dqMeshBasicMaterial)
         // scene.add(mesh)
 
         /* 渲染 */
-        setTimeout(function() {
-          controls.update()
-          renderer.render(scene, camera)
-        }, 1000)
+        // setTimeout(function() {
+        //   controls.update()
+        //   renderer.render(scene, camera)
+        // }, 1000)
         controls.addEventListener('change', () => {
           renderer.render(scene, camera)
         })
@@ -334,19 +342,22 @@
         //   console.error(error)
         // })
         // const self = this
+        // const colorArr = ['44d7b6', '0xff367a', '0xb6ddf1']
         loader.load(
           '/3dm/qiubaoguo4.gltf',
           // 'https://a.amap.com/jsapi_demos/static/gltf/Duck.gltf',
           (gltf) => {
-            // console.log(gltf)
             gltf.scene.traverse(function(child) {
+              // console.log(gltf)
               // console.log(child)
               if (child.isMesh) {
                 // console.log(qiuGroup)
                 // console.log(child)
                 if (child.name !== '球体') {
+                  // 绿：#44D7B6，红：#FF367A，灰：#B6DDF1
                   const material = new THREE.MeshLambertMaterial({
                     color: 0xffffff * Math.random(),
+                    // color: 0xffffff * colorArr[0],
                     transparent: false,
                     opacity: 0.8
                   })
@@ -376,6 +387,17 @@
             // console.log(xhr.total * 100)
             const p = xhr.loaded / xhr.total * 100
             console.log(`${p}% loaded`)
+            this.percentageObj.width = `${p}%`
+            if (p === 100) {
+              const _this = this
+              setTimeout(function() {
+                _this.show = false // 关闭进度条
+
+                // 渲染
+                controls.update()
+                renderer.render(scene, camera)
+              }, 3000)
+            }
             // console.log(groupArr)
           },
           (error) => {
@@ -456,5 +478,22 @@
     cursor: pointer;
     background-color: #1f3b74;
     color: #ffffff;
+  }
+
+  .progress {
+    position: fixed;
+    top: 40%;
+    left: 10%;
+    width: 80%;
+    height: 20px;
+    border: 2px solid #ff4500;
+    border-radius: 16px;
+
+    .percentage {
+      height: 20px;
+      width: 0%;
+      border-radius: 16px;
+      background-color: #ff4500;
+    }
   }
 </style>
