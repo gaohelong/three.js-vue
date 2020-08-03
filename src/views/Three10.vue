@@ -7,6 +7,7 @@
       <button class="btn" @click="freeMove(1)">水平移动</button>
       <button class="btn" @click="freeMove(2)">自由移动</button>
     </section>
+    <section>window.navigator.userAgent：{{ userAgent }}</section>
   </section>
 </template>
 
@@ -32,7 +33,9 @@
   export default {
     name: 'Three10',
     data() {
-      return {}
+      return {
+        userAgent: ''
+      }
     },
     methods: {
       freeMove(type) {
@@ -305,6 +308,7 @@
       await this.init()
       this.loadGltf()
       // this.animation()
+      this.userAgent = window.navigator.userAgent
     },
     beforeDestroy() {
       controls.dispose()

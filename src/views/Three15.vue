@@ -29,6 +29,7 @@
   let qiuGroup
   const groupArr = []
   const mouse = new THREE.Vector2()
+  const colorArr = ['rgb(68, 215, 182)', 'rgb(255, 54, 122)', 'rgb(182, 221, 241)']
 
   export default {
     name: 'Three15',
@@ -69,6 +70,7 @@
         controls.reset()
       },
       clickProc(e) {
+        e.preventDefault()
         console.clear()
         // event.preventDefault()
         console.log('e.clientX:' + e.clientX)
@@ -82,14 +84,16 @@
         // 新建一个三维单位向量 假设z方向就是0, 根据照相机，把这个向量转换到视点坐标系
         const vector = new THREE.Vector3(mouse.x, mouse.y, 0).unproject(camera)
         // console.log(camera.position, vector.sub(camera.position).normalize())
+        console.log('mouse-v3:', vector)
 
         // 在视点坐标系中形成射线,射线的起点向量是照相机， 射线的方向向量是照相机到点击的点，这个向量应该归一标准化。
+        // raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
         raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
+        console.log('camera.position:', camera.position)
 
         // 用一个新的原点和方向向量来更新射线（ray），用照相机的原点和点击的点构成一条直线。Vector2
         raycaster.setFromCamera(mouse, camera)
 
-        // console.log('mouse-v3:', vector)
         // console.log(qiuGroup.children)
 
         // 获取与raycaster射线相交的数组集合，其中的元素按照距离排序，越近的越靠前
@@ -100,20 +104,23 @@
           let seled = {}
           intersects.forEach((v, i) => {
             if (i === 0) {
-              seled = v.object
+              seled = v
             }
             console.log(`${i}: ${v.object.name}`)
           })
 
-          if (seled.name !== '球体') {
+          console.log('seled:', seled)
+
+          if (seled.object.name !== 'ball') {
             // 替换
             const material = new THREE.MeshLambertMaterial({
               color: 0xffffff * Math.random(),
+              // color: new THREE.Color(this.getColor()),
               transparent: false,
-              opacity: 0.8
+              opacity: 0.5
             })
-            seled.material = material
-            console.log(seled)
+            seled.object.material = material
+            console.log(seled.object)
             renderer.render(scene, camera)
           }
         }
@@ -188,7 +195,7 @@
 
         /* 控制器 */
         controls = new OrbitControls(camera, renderer.domElement)
-        controls.enableZoom = true // 启用或禁用摄像机的缩放。
+        controls.enableZoom = false // 启用或禁用摄像机的缩放。
         controls.maxZoom = 1 // 你能够将相机缩小多少
         controls.panSpeed = 1 // 位移的速度，其默认值为1。
         controls.minDistance = 0 // 你能够将相机向内移动多少（仅适用于PerspectiveCamera），其默认值为0。
@@ -237,8 +244,8 @@
         // scene.add(directionalLight)
 
         /* 半球光源 */
-        const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1)
-        scene.add(light)
+        // const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1)
+        // scene.add(light)
 
         // const hemiLight = new THREE.HemisphereLight(0x0000ff, 0x00ff00, 0.1)
         // hemiLight.position.set(0, 0, 0)
@@ -327,6 +334,8 @@
         //   renderer.render(scene, camera)
         // }, 1000)
         controls.addEventListener('change', () => {
+          // camera.lookAt(scene.position)
+          // controls.target = new THREE.Vector3(0, 0, 0)
           renderer.render(scene, camera)
         })
         document.querySelector('.three').appendChild(renderer.domElement)
@@ -341,10 +350,9 @@
         // }, undefined, function (error) {
         //   console.error(error)
         // })
-        // const self = this
-        // const colorArr = ['44d7b6', '0xff367a', '0xb6ddf1']
+        const self = this
         loader.load(
-          '/3dm/qiubaoguo4.gltf',
+          '/3dm/huliujiao2.gltf',
           // 'https://a.amap.com/jsapi_demos/static/gltf/Duck.gltf',
           (gltf) => {
             gltf.scene.traverse(function(child) {
@@ -353,13 +361,14 @@
               if (child.isMesh) {
                 // console.log(qiuGroup)
                 // console.log(child)
-                if (child.name !== '球体') {
+                if (child.name !== 'ball') {
                   // 绿：#44D7B6，红：#FF367A，灰：#B6DDF1
+                  console.log('loading:', self.getColor())
                   const material = new THREE.MeshLambertMaterial({
-                    color: 0xffffff * Math.random(),
-                    // color: 0xffffff * colorArr[0],
+                    // color: 0xffffff * Math.random(),
+                    color: new THREE.Color(self.getColor()),
                     transparent: false,
-                    opacity: 0.8
+                    opacity: 1
                   })
                   child.material = material
                 }
@@ -396,7 +405,7 @@
                 // 渲染
                 controls.update()
                 renderer.render(scene, camera)
-              }, 3000)
+              }, 2000)
             }
             // console.log(groupArr)
           },
@@ -438,6 +447,11 @@
         mesh.rotateY(0.003) // 每次绕y轴旋转0.01弧度 - 绕局部空间的Y轴旋转这个物体, 将要旋转的角度（以弧度来表示）
         requestAnimationFrameVal = window.requestAnimationFrame(this.animation) // 请求再次执行渲染函数render
         renderer.render(scene, camera) // 执行渲染操作
+      },
+      getColor() {
+        const min = 0
+        const max = 3
+        return colorArr[Math.floor(Math.random() * (max - min)) + min]
       }
     },
     async mounted() {
