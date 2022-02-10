@@ -13,7 +13,8 @@
   body {
     margin: 0;
     padding: 0;
-    background-color: rgb(0 0 0 / 0.5);
+    // background-color: rgb(0 0 0 / 0.5);
+    background-color: #FFFFFF;
     color: #ffffff;
     // background: url(assets/bg.png) no-repeat;
     // background-size: cover;
