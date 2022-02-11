@@ -109,6 +109,18 @@ const routes = [{
       {
         path: 't2',
         component: () => import('../views/study/t2.vue')
+      },
+      {
+        path: 't3',
+        component: () => import('../views/study/t3.vue')
+      },
+      {
+        path: 't4',
+        component: () => import('../views/study/t4.vue')
+      },
+      {
+        path: 't5',
+        component: () => import('../views/study/t5.vue')
       }
     ]
   }

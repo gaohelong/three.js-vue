@@ -5,11 +5,9 @@
 
 <script>
   import * as THREE from 'three'
-  // import { OrbitControls } from 'three/examples/js/controls/OrbitControls.js'
-
+  const OrbitControls = require('three-orbit-controls')(THREE)
   // let camera, scene, renderer
   // let geometry, material, mesh
-
   export default {
     name: 'Three1',
     data() {
@@ -62,12 +60,41 @@
         renderer.setClearColor(0xb9d3ff, 1) // 设置背景颜色
         document.body.appendChild(renderer.domElement) // body元素中插入canvas对象
 
-        // 执行渲染操作   指定场景、相机作为参数
-        renderer.render(scene, camera)
+        // 执行渲染操作指定场景、相机作为参数
+        // renderer.render(scene, camera)
+
+        /* 执行渲染操作指定场景、相机作为参数->旋转-setInterval */
+        // setInterval(() => {
+        //   renderer.render(scene, camera) // 执行渲染操作
+        //   mesh.rotateY(0.01) // 每次绕y轴旋转0.01弧度
+        // }, 20)
+
+        /* 执行渲染操作指定场景、相机作为参数->旋转-requestAnimationFrame */
+        // let T0 = new Date() // 上次时间
+        // const reRender = () => {
+        //   const T1 = new Date() // 本次时间
+        //   const t = T1 - T0 // 时间差
+        //   T0 = T1 // 把本次时间赋值给上次时间
+        //   requestAnimationFrame(reRender)
+        //   renderer.render(scene, camera) // 执行渲染操作
+        //   mesh.rotateY(0.001 * t) // 旋转角速度0.001弧度每毫秒
+        // }
+
+        // reRender()
+
+        /* 鼠标操作三维场景旋转、缩放 */
+        const reRender = () => {
+          renderer.render(scene, camera) // 执行渲染操作
+        }
+
+        reRender()
+        // const controls = new THREE.OrbitControls(camera, renderer.domElement) // 创建控件对象
+        const controls = new OrbitControls(camera, renderer.domElement) // 创建控件对象
+        controls.addEventListener('change', reRender) // 监听鼠标、键盘事件
       }
     },
     mounted() {
-      window.document.title = '第一个3D场景'
+      window.document.title = '鼠标操作三维场景旋转、缩放'
       this.init()
     }
   }
