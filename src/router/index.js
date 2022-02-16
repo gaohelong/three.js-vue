@@ -123,6 +123,28 @@ const routes = [{
         component: () => import('../views/study/t5.vue')
       }
     ]
+  },
+  {
+    path: '/study2',
+    name: 'Study2',
+    component: () => import('../views/study2/index.vue'),
+    children: [
+      {
+        path: '2-1',
+        component: () => import('../views/study2/2-1.vue')
+      }
+    ]
+  },
+  {
+    path: '/study3',
+    name: 'Study3',
+    component: () => import('../views/study3/index.vue'),
+    children: [
+      {
+        path: '3-1',
+        component: () => import('../views/study3/3-1.vue')
+      }
+    ]
   }
 ]
 

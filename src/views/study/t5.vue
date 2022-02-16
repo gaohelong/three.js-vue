@@ -107,10 +107,12 @@
         // renderer.render(scene, camera)
 
         /* 执行渲染操作指定场景、相机作为参数->旋转-setInterval */
-        // setInterval(() => {
-        //   renderer.render(scene, camera) // 执行渲染操作
-        //   mesh.rotateY(0.01) // 每次绕y轴旋转0.01弧度
-        // }, 20)
+        setInterval(() => {
+          renderer.render(scene, camera) // 执行渲染操作
+          mesh.rotateY(0.01) // 每次绕y轴旋转0.01弧度
+          mesh1.rotateY(0.01) // 每次绕y轴旋转0.01弧度
+          mesh3.rotateY(0.01) // 每次绕y轴旋转0.01弧度
+        }, 20)
 
         /* 执行渲染操作指定场景、相机作为参数->旋转-requestAnimationFrame */
         // let T0 = new Date() // 上次时间
