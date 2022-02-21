@@ -203,6 +203,18 @@ const routes = [{
       {
         path: '8-1-2',
         component: () => import('../views/study8/8-1-2.vue')
+      },
+      {
+        path: '8-3-1',
+        component: () => import('../views/study8/8-3-1.vue')
+      },
+      {
+        path: '8-4-1',
+        component: () => import('../views/study8/8-4-1.vue')
+      },
+      {
+        path: '8-4-2',
+        component: () => import('../views/study8/8-4-2.vue')
       }
     ]
   }
