@@ -145,6 +145,66 @@ const routes = [{
         component: () => import('../views/study3/3-1.vue')
       }
     ]
+  },
+  {
+    path: '/study5',
+    name: 'Study5',
+    component: () => import('../views/study5/index.vue'),
+    children: [
+      {
+        path: '5-1',
+        component: () => import('../views/study5/5-1.vue')
+      },
+      {
+        path: '5-2',
+        component: () => import('../views/study5/5-2.vue')
+      }
+    ]
+  },
+  {
+    path: '/study6',
+    name: 'Study6',
+    component: () => import('../views/study6/index.vue'),
+    children: [
+      {
+        path: '6-1',
+        component: () => import('../views/study6/6-1.vue')
+      },
+      {
+        path: '6-3',
+        component: () => import('../views/study6/6-3.vue')
+      }
+    ]
+  },
+  {
+    path: '/study7',
+    name: 'Study7',
+    component: () => import('../views/study7/index.vue'),
+    children: [
+      {
+        path: '7-1',
+        component: () => import('../views/study7/7-1.vue')
+      }
+    ]
+  },
+  {
+    path: '/study8',
+    name: 'Study8',
+    component: () => import('../views/study8/index.vue'),
+    children: [
+      {
+        path: '8',
+        component: () => import('../views/study8/8.vue')
+      },
+      {
+        path: '8-1-1',
+        component: () => import('../views/study8/8-1-1.vue')
+      },
+      {
+        path: '8-1-2',
+        component: () => import('../views/study8/8-1-2.vue')
+      }
+    ]
   }
 ]
 
