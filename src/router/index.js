@@ -215,6 +215,10 @@ const routes = [{
       {
         path: '8-4-2',
         component: () => import('../views/study8/8-4-2.vue')
+      },
+      {
+        path: '8-5-1',
+        component: () => import('../views/study8/8-5-1.vue')
       }
     ]
   }
