@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <div id="canvas"></div>
     <div class="three"></div>
   </div>
 </template>
@@ -24,6 +25,36 @@
        * 初始化
        */
       init() {
+        /* 创建canvas - start */
+        const canvas = document.createElement('canvas')
+        canvas.width = 512
+        canvas.height = 128
+        const c = canvas.getContext('2d')
+
+        // 矩形区域填充背景
+        c.fillStyle = '#ff00ff'
+        c.fillRect(0, 0, 512, 128)
+        c.beginPath()
+
+        // 文字
+        c.beginPath()
+        c.translate(256, 64)
+        c.fillStyle = '#000000' // 文本填充颜色
+        c.font = 'bold 48px 宋体' // 字体样式设置
+        c.textBaseline = 'middle' // 文本与fillText定义的纵坐标
+        c.textAlign = 'center' // 文本居中(以fillText定义的横坐标)
+        c.fillText('canvas测试', 0, 0)
+
+        // document.body.appendChild(canvas)
+        document.getElementById('canvas').appendChild(canvas)
+        /* 创建canvas - start - end */
+
+        // 材质对象6
+        const texture6 = new THREE.CanvasTexture(canvas)
+        const material6 = new THREE.MeshBasicMaterial({ // 这种材质不受光照的影, 图片本色
+          map: texture6 // 设置纹理贴图
+        })
+
         /* 创建场景对象Scene */
         const scene = new THREE.Scene()
 
@@ -80,7 +111,7 @@
         })
 
         // 设置材质数组
-        const materialArr = [material1, material2, material3, material4, material5, material4]
+        const materialArr = [material1, material2, material3, material4, material5, material6]
 
         const mesh = new THREE.Mesh(geometry, materialArr) // 网格模型对象Mesh
         scene.add(mesh) // 网格模型添加到场景中
@@ -140,12 +171,14 @@
       }
     },
     mounted() {
-      window.document.title = '视频纹理贴图VideoTexture'
+      window.document.title = 'canvas纹理贴图CanvasTexture'
       this.init()
     }
   }
 </script>
 
 <style lang="less" scoped>
-  .container {}
+  #canvas {
+    display: none;
+  }
 </style>
