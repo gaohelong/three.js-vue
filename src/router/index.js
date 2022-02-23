@@ -223,6 +223,32 @@ const routes = [{
       {
         path: '8-5-2',
         component: () => import('../views/study8/8-5-2.vue')
+      },
+      {
+        path: '8-5-3',
+        component: () => import('../views/study8/8-5-3.vue')
+      }
+    ]
+  },
+  {
+    path: '/study11',
+    name: 'Study11',
+    component: () => import('../views/study11/index.vue'),
+    children: [
+      {
+        path: '11-1-1',
+        component: () => import('../views/study11/11-1-1.vue')
+      }
+    ]
+  },
+  {
+    path: '/study12',
+    name: 'Study12',
+    component: () => import('../views/study12/index.vue'),
+    children: [
+      {
+        path: '12-1-1',
+        component: () => import('../views/study12/12-1-1.vue')
       }
     ]
   }

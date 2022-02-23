@@ -15,7 +15,7 @@
   // let camera, scene, renderer
   // let geometry, material, mesh
   export default {
-    name: 'Three8-4-2',
+    name: 'Three8-5-3',
     data() {
       return {}
     },
@@ -99,7 +99,7 @@
         // 创建相机对象-正视
         const k = width / height // 窗口宽高比
         const s = 200 // 三维场景显示范围控制系数，系数越大，显示的范围越大
-        const camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000)
+        const camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 2000)
         camera.position.set(200, 300, 200) // 设置相机位置
         camera.lookAt(scene.position) // 设置相机方向(指向的场景对象)
 
@@ -127,6 +127,7 @@
 
         /* 鼠标操作三维场景旋转、缩放 */
         const reRender = () => {
+          // console.log('camera: ', camera)
           renderer.render(scene, camera) // 执行渲染操作
         }
 
@@ -147,22 +148,35 @@
         window.addEventListener('keydown', function(e) {
           // console.log(e)
           const key = e.key // 当前键盘按键
-          if (key === 'w') { // 前进
-            console.log('前进')
-            camera.position.y = 200 // 设置相机y位置
-          } else if (key === 's') { // 后退
-            console.log('后退')
-            camera.position.y = 300 // 设置相机y位置
+          if (key === 'w') { // 前
+            console.log('前-负x轴')
+            mesh.rotateX(-Math.PI / 180) // 绕-x轴旋转π / 180
+          } else if (key === 's') { // 后
+            console.log('后-正x轴')
+            mesh.rotateX(Math.PI / 180) // 绕x轴旋转π / 180
           } else if (key === 'a') { // 左
-            camera.position.x = 200 // 设置相机x位置
+            console.log('左-正y轴')
+            mesh.rotateY(Math.PI / 180) // 绕y轴旋转π / 180
           } else if (key === 'd') { // 右
-            camera.position.x = 100 // 设置相机x位置
+            console.log('右-负y轴')
+            mesh.rotateY(-Math.PI / 180) // 绕-y轴旋转π / 180
+          } else if (key === 'z') { // z轴旋转
+            console.log('z轴')
+            mesh.rotateZ(Math.PI / 180) // 绕z轴旋转π / 180
+          } else if (key === 'u') { // 近景
+            console.log('近景')
+            camera.zoom += 0.1
+            camera.updateProjectionMatrix()
+          } else if (key === 'i') { // 远景
+            console.log('远景')
+            camera.zoom -= 0.1
+            camera.updateProjectionMatrix()
           }
         })
       }
     },
     mounted() {
-      window.document.title = '视频纹理贴图VideoTexture'
+      window.document.title = '键盘操作'
       this.init()
     }
   }
