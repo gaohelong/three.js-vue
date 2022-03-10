@@ -272,6 +272,10 @@ const routes = [{
       {
         path: 'g6',
         component: () => import('../views/game/g6.vue')
+      },
+      {
+        path: 'g7',
+        component: () => import('../views/game/g7.vue')
       }
     ]
   }

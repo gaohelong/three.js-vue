@@ -9,7 +9,19 @@
   </div>
 </template>
 
-<style lang="scss">
+<style lang="less">
+  @import  './common.less';
+
+  html {
+    font-size: 37.5px;
+  }
+
+  /* 元素初始化 */
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+
   body {
     margin: 0;
     padding: 0;
@@ -33,9 +45,11 @@
   }
 
   #nav {
-    padding: 30px;
+    padding: 60/@rem;
+    font-size: 32/@rem;
 
     a {
+      font-size: 32/@rem;
       font-weight: bold;
       color: #2c3e50;
 

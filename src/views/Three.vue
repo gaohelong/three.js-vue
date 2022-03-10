@@ -61,4 +61,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
+    @import '../common.less';
+
+    .item {
+      height: 80/@rem;
+      line-height: 80/@rem;
+
+      a {
+        font-size: 32/@rem;
+      }
+    }
 </style>
