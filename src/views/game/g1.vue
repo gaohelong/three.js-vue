@@ -19,15 +19,16 @@
   let touchBeginPosition = new THREE.Vector2(0, 0)
   let touchMovePosition = new THREE.Vector2(0, 0)
   let touchEndPosition = new THREE.Vector2(0, 0)
-  // let cameraX = 0
-  // let cameraY = 0
-  let cameraZ = -1000
+  // let cameraZ = -1000
 
   export default {
     name: 'game-1',
     data() {
       return {
-        direction: ''
+        direction: '',
+        rotateAngle: Math.PI,
+        rotateSpeed: (2 / 180) * Math.PI,
+        movementSpeed: 300
       }
     },
     methods: {
@@ -194,24 +195,52 @@
           const beginX = touchBeginPosition.x // 开始的x值
           const moveY = touchMovePosition.y // 移动的y值
           const moveX = touchMovePosition.x // 移动的x值
-          // const upDownRange = 0 // 上下容错区间
-          // const leftRightRange = 0 // 左右容错区间
+          const upDownRange = 0 // 上下容错区间
+          let leftRightRange = 0 // 左右容错区间
+          const leftRightMax = 30 // 左右容错区间最大值
 
           // console.log('beginY: ', beginY, 'moveY: ', moveY, 'beginX: ', beginX, 'moveX: ', moveX)
-          // console.log('upDownRange: ', upDownRange, 'leftRightRange: ', leftRightRange)
+          console.log('upDownRange: ', upDownRange, 'leftRightRange: ', leftRightRange)
 
           if (moveY < beginY) { // 前->移动中的y小于初始的y
-            this.direction = '前'
-            cameraZ = cameraZ + 20
-            camera.position.z = cameraZ // 设置相机Z轴位置位置
+            leftRightRange = Math.abs(beginX - moveX)
+            console.log(leftRightRange)
+            if (leftRightRange > leftRightMax) {
+              if (moveX < beginX) { // 左->移动中的x小于初始的x
+                this.direction = '左'
+                this.rotateAngle += this.rotateSpeed
+                camera.rotateY(this.rotateSpeed)
+                // camera.lookAt(scene.position)
+              } else if (moveX > beginX) { // 右->移动中的x大于初始的x
+                this.direction = '右'
+                this.rotateAngle -= this.rotateSpeed
+                camera.rotateY(-this.rotateSpeed)
+                // camera.lookAt(scene.position)
+              }
+              camera.lookAt(scene.position)
+            } else {
+              this.direction = '前'
+              camera.translateY(this.movementSpeed)
+              // cameraZ = cameraZ + 15
+              // camera.position.z = cameraZ // 设置相机Z轴位置位置
+              camera.lookAt(scene.position)
+            }
           } else if (moveY > beginY) { // 后->移动中的y大于初始的y
-            this.direction = '后'
-            cameraZ = cameraZ - 20
-            camera.position.z = cameraZ // 设置相机Z轴位置位置
-          } else if (moveX < beginX) { // 左->移动中的x小于初始的x
-            this.direction = '左'
-          } else if (moveX > beginX) { // 右->移动中的x大于初始的x
-            this.direction = '右'
+            leftRightRange = Math.abs(beginX - moveX)
+            console.log(leftRightRange)
+            if (leftRightRange > leftRightMax) {
+              if (moveX < beginX) { // 左->移动中的x小于初始的x
+                this.direction = '左'
+              } else if (moveX > beginX) { // 右->移动中的x大于初始的x
+                this.direction = '右'
+              }
+            } else {
+              this.direction = '后'
+              camera.translateY(-this.movementSpeed)
+              // cameraZ = cameraZ - 15
+              // camera.position.z = cameraZ // 设置相机Z轴位置位置
+              camera.lookAt(scene.position)
+            }
           }
 
           // cameraX = 0

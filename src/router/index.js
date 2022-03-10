@@ -258,12 +258,20 @@ const routes = [{
     component: () => import('../views/game/index.vue'),
     children: [
       {
-      path: 'g1',
+        path: 'g1',
         component: () => import('../views/game/g1.vue')
       },
       {
-      path: 'g2',
+        path: 'g2',
         component: () => import('../views/game/g2.vue')
+      },
+      {
+        path: 'g3',
+        component: () => import('../views/game/g3.vue')
+      },
+      {
+        path: 'g6',
+        component: () => import('../views/game/g6.vue')
       }
     ]
   }
