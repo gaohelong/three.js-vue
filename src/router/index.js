@@ -288,6 +288,14 @@ const routes = [{
       {
         path: 'g10',
         component: () => import('../views/game/g10.vue')
+      },
+      {
+        path: 'g11',
+        component: () => import('../views/game/g11.vue')
+      },
+      {
+        path: 'g12',
+        component: () => import('../views/game/g12.vue')
       }
     ]
   }
