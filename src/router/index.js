@@ -98,6 +98,16 @@ const routes = [{
     component: () => import('../views/Three15.vue')
   },
   {
+    path: '/three16',
+    name: 'Three16',
+    component: () => import('../views/Three16.vue')
+  },
+  {
+    path: '/three17',
+    name: 'Three17',
+    component: () => import('../views/Three17.vue')
+  },
+  {
     path: '/study',
     name: 'Study',
     component: () => import('../views/study/index.vue'),
@@ -300,6 +310,10 @@ const routes = [{
       {
         path: 'g13',
         component: () => import('../views/game/g13.vue')
+      },
+      {
+        path: 'g15',
+        component: () => import('../views/game/g15.vue')
       }
     ]
   }
