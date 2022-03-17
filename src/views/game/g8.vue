@@ -13,7 +13,7 @@
   import enImg4 from '@/assets/exhibition/4.jpeg'
   import enImg5 from '@/assets/exhibition/5.jpeg'
   import TrackballControls from 'three-trackballcontrols'
-  // const OrbitControls = require('three-orbit-controls')(THREE)
+  // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
   let camera, scene, renderer
   let trackballControls, clock

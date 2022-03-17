@@ -10,8 +10,7 @@
   import imgAct1 from '@/assets/act.jpg'
   import imgAct2 from '@/assets/act2.jpg'
   import imgAct3 from '@/assets/act3.jpg'
-  const OrbitControls = require('three-orbit-controls')(THREE)
-  // import { OrbitControls } from 'three/examples/js/controls/OrbitControls.js'
+  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
   // let camera, scene, renderer
   // let geometry, material, mesh

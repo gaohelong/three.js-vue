@@ -12,8 +12,7 @@
   import enImg1 from '@/assets/exhibition/2.jpeg'
   import enImg2 from '@/assets/exhibition/3.jpeg'
   import enImg3 from '@/assets/exhibition/4.jpeg'
-  const OrbitControls = require('three-orbit-controls')(THREE)
-  // import { OrbitControls } from 'three/examples/js/controls/OrbitControls.js'
+  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
   let camera, scene, renderer
   let geometry, mesh

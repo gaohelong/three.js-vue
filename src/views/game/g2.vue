@@ -13,11 +13,8 @@
 <script>
   import * as THREE from 'three'
   // import { OBJLoader, MTLLoader } from 'three-obj-mtl-loader'
-  import GLTFLoader from 'three-gltf-loader'
-  // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-  // import { GLTFLoader } from 'three/examples/jms/loaders/GLTFLoader'
-  // import img2k from '@/assets/2k_earth_daymap.jpg'
-  const OrbitControls = require('three-orbit-controls')(THREE)
+  import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
   let renderer, controls, camera, scene
   let mesh

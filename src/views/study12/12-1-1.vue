@@ -6,8 +6,7 @@
 
 <script>
   import * as THREE from 'three'
-  const OrbitControls = require('three-orbit-controls')(THREE)
-  // import { OrbitControls } from 'three/examples/js/controls/OrbitControls.js'
+  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
   // let camera, scene, renderer
   // let geometry, material, mesh

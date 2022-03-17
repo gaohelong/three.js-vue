@@ -14,13 +14,9 @@
 <script>
   import * as THREE from 'three'
   // import { OBJLoader, MTLLoader } from 'three-obj-mtl-loader'
-  import GLTFLoader from 'three-gltf-loader'
-  import {
-    OrbitControls
-  } from 'three/examples/jsm/controls/OrbitControls'
-  // import { GLTFLoader } from 'three/examples/jms/loaders/GLTFLoader'
+  import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
   import img2k from '@/assets/2k_earth_daymap.jpg'
-  // const OrbitControls = require('three-orbit-controls')(THREE)
 
   let renderer, controls, camera, scene
   let mesh
@@ -31,7 +27,7 @@
   const mouse = new THREE.Vector2()
 
   export default {
-    name: 'Three10',
+    name: 'Three17',
     data() {
       return {
         userAgent: ''
@@ -129,10 +125,12 @@
           premultipliedAlpha: false // renderer是否假设颜色有 premultiplied alpha. 默认为true
           // antialias: true // 抗锯齿
         })
-        const size = Math.min(window.innerWidth, 600)
-        renderer.setSize(size, size)
+
+        const width = window.innerWidth // 窗口宽度
+        // const height = window.innerHeight // 窗口高度
+        renderer.setSize(width, width)
         renderer.setPixelRatio(window.devicePixelRatio)
-        // renderer.shadowMap.enabled = true // 设置是否开启投影, 开启的话, 光照会产生投影
+        renderer.shadowMap.enabled = true // 设置是否开启投影, 开启的话, 光照会产生投影
         // renderer.shadowMap.type = THREE.PCFSoftShadowMap // 设置投影类型, 这边的柔和投影
 
         /* 场景 */
@@ -141,19 +139,34 @@
         /* 分组 */
         // qiuGroup = new THREE.Group()
 
+        /* --- 辅助坐标系  参数250表示坐标系大小，可以根据场景大小去设置 --- */
+        const axisHelper = new THREE.AxisHelper(1000)
+        scene.add(axisHelper)
+
         /* 灯光 */
         // 环境光会均匀的照亮场景中的所有物体。
-        const ambientLight = new THREE.AmbientLight(0xffffff)
-        scene.add(ambientLight)
+        // const ambientLight = new THREE.AmbientLight(0xffffff)
+        // scene.add(ambientLight)
+
+        /* --- 灯光-自然光 --- */
+        const spotLight = new THREE.AmbientLight(0xffffff)
+        // spotLight.position.set(30, 40, 100)
+        scene.add(spotLight)
 
         /* 声明 raycaster 和 mouse */
         raycaster = new THREE.Raycaster()
 
         /* 相机 */
-        camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000)
-        camera.translateX(10)
-        camera.translateY(0)
-        camera.translateZ(2.8)
+        camera = new THREE.PerspectiveCamera(45, 1, 0.1, 10000)
+        // camera.translateX(10)
+        // camera.translateY(0)
+        // camera.translateZ(2.8)
+        camera.position.x = 0
+        camera.position.y = 0
+        camera.position.z = 1000
+        camera.lookAt(scene.position)
+        scene.add(camera)
+        // camera.translateY(300)
         // raycaster.setFromCamera(mouse, camera)
 
         /* 控制器 */
@@ -223,7 +236,7 @@
         /* 加载gltf */
         const loader = new GLTFLoader()
         // console.log(loader)
-        loader.load('/3dm/suzyBlender2glb.glb', function (gltf) {
+        loader.load('/3dm/loft.glb', function (gltf) {
           scene.add(gltf.scene)
         }, undefined, function (error) {
           console.error(error)
@@ -314,6 +327,7 @@
       controls.dispose()
       renderer.dispose()
       window.cancelAnimationFrame(requestAnimationFrameVal)
+      document.title = 'GLTF2Loader'
     }
   }
 </script>

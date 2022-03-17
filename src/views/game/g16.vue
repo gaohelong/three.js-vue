@@ -1,6 +1,6 @@
 <template>
   <section class="container">
-    <div>gltf物体选取(但是点击范围还有一些问题)</div>
+    <div>加载gltf</div>
     <div class="three" @click="clickProc"></div>
     <section>
       <button class="btn" @click="reset">回到初始位置</button>
@@ -11,24 +11,25 @@
 </template>
 
 <script>
-  import img2k from '@/assets/2k_earth_daymap.jpg'
   import * as THREE from 'three'
   // import { OBJLoader, MTLLoader } from 'three-obj-mtl-loader'
-  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
   import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
   let renderer, controls, camera, scene
   let mesh
   let requestAnimationFrameVal
   let raycaster
-  let qiuGroup
-  const groupArr = []
+  // let qiuGroup
+  // const groupArr = []
   const mouse = new THREE.Vector2()
 
   export default {
-    name: 'Three11',
+    name: 'Three10',
     data() {
-      return {}
+      return {
+        userAgent: ''
+      }
     },
     methods: {
       freeMove(type) {
@@ -59,38 +60,22 @@
         controls.reset()
       },
       clickProc(e) {
-        console.clear()
         // event.preventDefault()
         console.log('e.clientX:' + e.clientX)
         console.log('e.clientY:' + e.clientY)
 
-        // 通过鼠标点击位置,计算出 raycaster 所需点的位置,以屏幕为中心点,范围 -1 到 1
-        mouse.x = (e.clientX / window.innerWidth) * 2 - 1
-        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
-        console.log('mouse-v2:', mouse)
+        // // 通过鼠标点击位置,计算出 raycaster 所需点的位置,以屏幕为中心点,范围 -1 到 1
+        // mouse.x = (e.clientX / window.innerWidth) * 2 - 1
+        // mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
+        // console.log('mouse:', mouse)
 
-        // z轴
-        const vector = new THREE.Vector3(mouse.x, mouse.y, 0).unproject(camera)
-        console.log(camera.position, vector.sub(camera.position).normalize())
-        raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
-        // raycaster.setFromCamera(vector, camera)
-        // camera.lookAt({
-        //   x: 0,
-        //   y: 0,
-        //   z: 0
-        // })
-        console.log('mouse-v3:', vector)
+        // const vector = new THREE.Vector3(mouse.x, mouse.y, 2.8).unproject(camera)
+        // raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
 
-        // console.log(qiuGroup.children)
-        // 获取与raycaster射线相交的数组集合，其中的元素按照距离排序，越近的越靠前
-        const intersects = raycaster.intersectObjects(qiuGroup.children, true) // 遍历子元素
+        // // 获取与raycaster射线相交的数组集合，其中的元素按照距离排序，越近的越靠前
+        // const intersects = raycaster.intersectObjects(qiuGroup.children, true) // 遍历子元素
 
-        console.log(intersects)
-        if (intersects.length > 0) {
-          intersects.forEach((v, i) => {
-            console.log(`${i}: ${v.object.name}`)
-          })
-        }
+        // console.log(intersects)
 
         // 返回选中的对象数组
         // return intersects
@@ -102,7 +87,7 @@
 
         // 新建一个三维单位向量 假设z方向就是0
         // 根据照相机，把这个向量转换到视点坐标系
-        const vector = new THREE.Vector3(mouse.x, mouse.y, 2.8).unproject(camera)
+        const vector = new THREE.Vector3(mouse.x, mouse.y, 0).unproject(camera)
         console.log(vector)
 
         // 在视点坐标系中形成射线,射线的起点向量是照相机， 射线的方向向量是照相机到点击的点，这个向量应该归一标准化。
@@ -129,18 +114,27 @@
         controls.reset()
       },
       clearAnimationFrame() {
-        window.cancelAnimationFrame(requestAnimationFrameVal)
+        // window.cancelAnimationFrame(requestAnimationFrameVal)
       },
+      /**
+       * 初始化
+       */
       async init () {
         /* 初始化渲染实例及设置 */
+        const width = window.innerWidth // 窗口宽度
+        const height = window.innerHeight // 窗口高度
+        const k = width / height // 窗口宽高比
         renderer = new THREE.WebGLRenderer({
           alpha: true, // canvas是否包含alpha (透明度)。默认为 false
           premultipliedAlpha: false // renderer是否假设颜色有 premultiplied alpha. 默认为true
           // antialias: true // 抗锯齿
         })
-        const size = Math.min(window.innerWidth, 600)
-        renderer.setSize(size, size)
+
+        // const size = Math.min(window.innerWidth, 600)
+        // renderer.setSize(size, size)
+        renderer.setSize(width, height) // 设置渲染区域尺寸
         renderer.setPixelRatio(window.devicePixelRatio)
+        renderer.setClearColor(0xb9d3ff, 1) // 设置背景颜色
         // renderer.shadowMap.enabled = true // 设置是否开启投影, 开启的话, 光照会产生投影
         // renderer.shadowMap.type = THREE.PCFSoftShadowMap // 设置投影类型, 这边的柔和投影
 
@@ -148,27 +142,34 @@
         scene = new THREE.Scene()
 
         /* 分组 */
-        qiuGroup = new THREE.Group()
+        // qiuGroup = new THREE.Group()
 
         /* 灯光 */
         // 环境光会均匀的照亮场景中的所有物体。
         const ambientLight = new THREE.AmbientLight(0xffffff)
         scene.add(ambientLight)
 
+        // 灯光-自然光
+        // const spotLight = new THREE.AmbientLight(0xffffff)
+        // // spotLight.position.set(30, 40, 100)
+        // scene.add(spotLight)
+
         /* 声明 raycaster 和 mouse */
         raycaster = new THREE.Raycaster()
 
         /* 相机 */
-        camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000)
-        // camera.translateX(0)
+        camera = new THREE.PerspectiveCamera(45, k, 0.1, 10000)
+        camera.position.set(0.8, -0.02, -2) // 设置相机位置
+        camera.lookAt(scene.position) // 设置相机方向(指向的场景对象)
+        // camera.translateX(10)
         // camera.translateY(0)
-        camera.translateZ(2.8)
+        // camera.translateZ(2.8)
         // raycaster.setFromCamera(mouse, camera)
 
         /* 控制器 */
         controls = new OrbitControls(camera, renderer.domElement)
-        controls.enableZoom = false // 启用或禁用摄像机的缩放。
-        controls.maxZoom = 1 // 你能够将相机缩小多少
+        controls.enableZoom = true // 启用或禁用摄像机的缩放。
+        // controls.maxZoom = 1 // 你能够将相机缩小多少
         controls.panSpeed = 1 // 位移的速度，其默认值为1。
         controls.minDistance = 0 // 你能够将相机向内移动多少（仅适用于PerspectiveCamera），其默认值为0。
         controls.maxDistance = 10 // 你能够将相机向外移动多少（仅适用于PerspectiveCamera），其默认值为Infinity。
@@ -184,73 +185,19 @@
         // polarAngleVal = controls.getPolarAngle() // 获得当前的垂直旋转，单位为弧度。
 
         // 限制水平移动.
-        controls.minPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的下限，范围是0到Math.PI，其默认值为0。
-        controls.maxPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的上限，范围是0到Math.PI，其默认值为Math.PI。
+        // controls.minPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的下限，范围是0到Math.PI，其默认值为0。
+        // controls.maxPolarAngle = Math.PI / 2 // 你能够垂直旋转的角度的上限，范围是0到Math.PI，其默认值为Math.PI。
 
         const light = new THREE.PointLight(0xff0000, 1, 100)
         light.position.set(50, 50, 0)
         scene.add(light)
-
-        /* 用于简单模拟3个坐标轴的对象. 红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴. */
-        const axesHelper = new THREE.AxesHelper(5)
-        scene.add(axesHelper)
-
-        /* 坐标格辅助对象. 坐标格实际上是2维线数组. */
-        const gridHelper = new THREE.GridHelper(10, 10, 0x040404, 0x123456)
-        scene.add(gridHelper)
-
-        /* 用于图形化地展示对象世界轴心对齐的包围盒的辅助对象。 */
-        const sphere = new THREE.SphereBufferGeometry()
-        const object = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial(0xff0000))
-        const box = new THREE.BoxHelper(object, 0xffff00)
-        scene.add(box)
-
-        /* 用于模拟相机视锥体的辅助对象. */
-        const cameraHelper = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-        const helper = new THREE.CameraHelper(cameraHelper)
-        scene.add(helper)
-
-        /* 创建一个虚拟的球形网格 Mesh 的辅助对象来模拟 点光源 PointLight. */
-        const pointLight = new THREE.PointLight(0xff0000, 1, 100)
-        pointLight.position.set(10, 10, 10)
-        scene.add(pointLight)
-
-        const sphereSize = 1
-        const pointLightHelper = new THREE.PointLightHelper(pointLight, sphereSize)
-        scene.add(pointLightHelper)
-
-        /* 本地图片、网络获取图片 */
-        const loader = new THREE.TextureLoader()
-
-        /* 地球材质 */
-        const map = await loader.load(
-          // 资源URL
-          // 'https://www.solarsystemscope.com/textures/download/2k_earth_daymap.jpg', // 网络获取图片
-          img2k, // 本地图片
-          // onLoad回调
-          function (texture) {
-            return texture
-          },
-          undefined,
-          // onError回调
-          function (error) {
-            console.error('An error happened.', error)
-          }
-        )
-
-        const dqMeshBasicMaterial = new THREE.MeshBasicMaterial({
-          map
-        })
-        dqMeshBasicMaterial.transparent = true // 是否透明
-        dqMeshBasicMaterial.opacity = 1 // 透明度
-        mesh = new THREE.Mesh(new THREE.SphereBufferGeometry(1, 32, 32), dqMeshBasicMaterial)
-        // scene.add(mesh)
 
         /* 渲染 */
         setTimeout(function () {
           renderer.render(scene, camera)
         }, 1000)
         controls.addEventListener('change', () => {
+          // console.log(camera)
           renderer.render(scene, camera)
         })
         document.querySelector('.three').appendChild(renderer.domElement)
@@ -260,39 +207,16 @@
         /* 加载gltf */
         const loader = new GLTFLoader()
         // console.log(loader)
-        // loader.load('https://a.amap.com/jsapi_demos/static/gltf/Duck.gltf', function (gltf) {
-        //   scene.add(gltf.scene)
-        // }, undefined, function (error) {
-        //   console.error(error)
-        // })
-        // const self = this
+
+        /* load-整体加载 */
         loader.load(
-          '/3dm/qiuqiu.gltf',
-          // 'https://a.amap.com/jsapi_demos/static/gltf/Duck.gltf',
+          // '/3dm/suzy_out/suzy.gltf',
+          '/3dm/loft2.glb',
           (gltf) => {
-            // console.log(gltf)
-            gltf.scene.traverse(function (child) {
-              // console.log(child)
-              if (child.isMesh) {
-                // console.log(qiuGroup)
-                // console.log(child)
-                groupArr.push(child)
-                // console.log(groupArr)
-                // TOFIX RoughnessMipmapper seems to be broken with WebGL 2.0
-                // roughnessMipmapper.generateMipmaps( child.material )
-                // self.addGroup(child)
-              }
-            })
-
-            // 遍历添加
-            groupArr.map(v => {
-              qiuGroup.add(v)
-            })
-
-            // called when the resource is loaded
-            // scene.add(gltf.scene)
-            // qiuGroup.position.copy(this.getPosition(180, 180, 1))
-            scene.add(qiuGroup)
+            gltf.scene.translateY(-1)
+            gltf.scene.rotateY(Math.PI / 1)
+            scene.add(gltf.scene)
+            renderer.render(scene, camera)
           },
           (xhr) => {
             // called while loading is progressing
@@ -305,18 +229,11 @@
           (error) => {
             // called when loading has errors
             console.error('An error happened', error)
+          },
+          (error) => {
+            console.error(error)
           }
         )
-        // 包含材质
-        // new MTLLoader().setPath('/static/3dm/VANS/').load('VANS.mtl', materials => {
-        //   // console.log("materials", materials)
-        //   materials.preload()
-        //   new OBJLoader().setMaterials(materials).setPath('/static/3dm/VANS/').load('VANS.obj', obj => {
-        //     obj.scale.set(0.8, 0.8, 0.8)
-        //     obj.position.set(-40, -50, 10)
-        //     scene.add(obj)
-        //   })
-        // })
       },
       async loadTexture (url) {
         const loader = new THREE.TextureLoader()
@@ -346,6 +263,7 @@
       await this.init()
       this.loadGltf()
       // this.animation()
+      // this.userAgent = window.navigator.userAgent
     },
     beforeDestroy() {
       controls.dispose()
